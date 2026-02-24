@@ -103,7 +103,7 @@ const CategoriesPage: React.FC = () => {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                to={`/category/${category.id}`}
+                to={`/categories/${category.id}`}
                 className="flex flex-col items-center cursor-pointer group"
               >
                 <div className="relative w-64 h-64 mb-8">

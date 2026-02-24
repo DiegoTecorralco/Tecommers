@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './HomePage.css';
 
 const HomePage: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = 'unset';
+  };
+
+  const categories = [
+    { id: 'electronica', name: 'Electrónica', icon: 'devices' },
+    { id: 'moda', name: 'Moda', icon: 'checkroom' },
+    { id: 'hogar', name: 'Hogar', icon: 'chair' },
+    { id: 'deportes', name: 'Deportes', icon: 'sports_soccer' },
+    { id: 'tecnologia', name: 'Tecnología', icon: 'computer' },
+    { id: 'herramientas', name: 'Herramientas', icon: 'build' }
+  ];
+
   return (
     <>
-      {/* ================= NAVBAR PRINCIPAL ================= */}
+      {/* ================= NAVBAR ================= */}
       <header className="header">
         <div className="header-container">
           <div className="logo-container">
@@ -17,21 +43,11 @@ const HomePage: React.FC = () => {
           </div>
 
           <nav className="nav">
-            <Link to="/" className="nav-link active">
-              Home
-            </Link>
-            <Link to="/categories" className="nav-link">
-              Categorías
-            </Link>
-            <Link to="/offers" className="nav-link">
-              Ofertas
-            </Link>
-            <Link to="/services" className="nav-link">
-              Servicios
-            </Link>
-            <Link to="/about" className="nav-link">
-              Nosotros
-            </Link>
+            <Link to="/" className="nav-link active">Home</Link>
+            <Link to="/categories" className="nav-link">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
           <div className="icon-container">
@@ -41,10 +57,119 @@ const HomePage: React.FC = () => {
             <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
               <span className="material-symbols-outlined">person</span>
             </Link>
+            <div className="hamburger-menu">
+              <button 
+                className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
+                onClick={toggleMenu}
+                aria-label="Menú"
+              >
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
-      {/* ================= FIN NAVBAR ================= */}
+
+      {/* ================= MENÚ LATERAL ================= */}
+      <div className={`side-menu-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
+      <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
+        <div className="side-menu-header">
+          <div className="side-menu-user">
+            <div className="side-menu-avatar">
+              <span className="material-symbols-outlined">account_circle</span>
+            </div>
+            <div className="side-menu-user-info">
+              <h3>Invitado</h3>
+              <p>Inicia sesión para más opciones</p>
+            </div>
+          </div>
+          <button className="side-menu-close" onClick={closeMenu}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="side-menu-search">
+          <div className="side-menu-search-box">
+            <span className="material-symbols-outlined">search</span>
+            <input 
+              type="text" 
+              className="side-menu-search-input" 
+              placeholder="Buscar productos..." 
+            />
+          </div>
+        </div>
+
+        <div className="side-menu-nav">
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Menú Principal</h4>
+            <ul className="side-menu-links">
+              <li>
+                <Link to="/" className="side-menu-link active" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">home</span>Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">category</span>Categorías
+                </Link>
+              </li>
+              <li>
+                <Link to="/offers" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">local_offer</span>Ofertas
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">build</span>Servicios
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">info</span>Nosotros
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Categorías Populares</h4>
+            <div className="side-menu-category-grid">
+              {categories.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  to={`/category/${cat.id}`} 
+                  className="side-menu-category-item" 
+                  onClick={closeMenu}
+                >
+                  <div className="category-icon">
+                    <span className="material-symbols-outlined">{cat.icon}</span>
+                  </div>
+                  <span className="category-name">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="side-menu-footer">
+          <div className="side-menu-footer-links">
+            <Link to="/help" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">help</span>
+              Centro de Ayuda
+            </Link>
+            <Link to="/login" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">login</span>
+              Iniciar Sesión
+            </Link>
+            <Link to="/register" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">app_registration</span>
+              Registrarse
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* ================= HERO SECTION ================= */}
       <section className="hero">
@@ -58,6 +183,7 @@ const HomePage: React.FC = () => {
           <p className="hero-subtitle">
             Descubre nuestra selección exclusiva de productos con envíos a todo el país.
           </p>
+          
           <div className="search-container">
             <div className="search-box">
               <div className="search-icon">
@@ -70,28 +196,11 @@ const HomePage: React.FC = () => {
               />
               <button className="search-button">Buscar</button>
             </div>
-            <div className="category-links">
-              <Link to="/category/electronica" className="category-link">
-                Electrónica
-              </Link>
-              <span className="category-dot"></span>
-              <Link to="/category/moda" className="category-link">
-                Moda
-              </Link>
-              <span className="category-dot"></span>
-              <Link to="/category/hogar" className="category-link">
-                Hogar
-              </Link>
-              <span className="category-dot"></span>
-              <Link to="/category/deportes" className="category-link">
-                Deportes
-              </Link>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ================= CATEGORÍAS SECTION ================= */}
+      {/* ================= MAIN CONTENT ================= */}
       <main className="main">
         <div className="section-header">
           <div>
@@ -99,12 +208,10 @@ const HomePage: React.FC = () => {
             <h2 className="section-title">Nuestras Categorías</h2>
           </div>
           <Link to="/categories" className="section-link">
-            Ver todas{' '}
-            <span className="material-symbols-outlined section-link-icon">
-              arrow_forward_ios
-            </span>
+            Ver todas <span className="material-symbols-outlined">arrow_forward_ios</span>
           </Link>
         </div>
+
         <div className="categories-grid">
           {/* Tecnología */}
           <Link to="/category/tecnologia" className="category-card">
@@ -182,65 +289,26 @@ const HomePage: React.FC = () => {
               Tu aliado estratégico en compras online. Calidad, rapidez y confianza en cada uno de
               tus pedidos.
             </p>
-            <div className="social-icons">
-              <button className="social-icon" aria-label="Compartir">
-                <span className="material-symbols-outlined">share</span>
-              </button>
-              <button className="social-icon" aria-label="Correo">
-                <span className="material-symbols-outlined">mail</span>
-              </button>
-            </div>
           </div>
+          
           <div className="footer-section">
             <h4 className="footer-heading">Empresa</h4>
             <ul className="footer-links">
-              <li>
-                <Link to="/about" className="footer-link">
-                  Sobre Nosotros
-                </Link>
-              </li>
-              <li>
-                <Link to="/branches" className="footer-link">
-                  Sucursales
-                </Link>
-              </li>
-              <li>
-                <Link to="/careers" className="footer-link">
-                  Trabaja con nosotros
-                </Link>
-              </li>
-              <li>
-                <Link to="/sustainability" className="footer-link">
-                  Sustentabilidad
-                </Link>
-              </li>
+              <li><Link to="/about" className="footer-link">Sobre Nosotros</Link></li>
+              <li><Link to="/branches" className="footer-link">Sucursales</Link></li>
+              <li><Link to="/careers" className="footer-link">Trabaja con nosotros</Link></li>
             </ul>
           </div>
+
           <div className="footer-section">
             <h4 className="footer-heading">Soporte</h4>
             <ul className="footer-links">
-              <li>
-                <Link to="/help" className="footer-link">
-                  Centro de ayuda
-                </Link>
-              </li>
-              <li>
-                <Link to="/returns" className="footer-link">
-                  Políticas de devolución
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="footer-link">
-                  Términos y condiciones
-                </Link>
-              </li>
-              <li>
-                <Link to="/tracking" className="footer-link">
-                  Estado de envío
-                </Link>
-              </li>
+              <li><Link to="/help" className="footer-link">Centro de ayuda</Link></li>
+              <li><Link to="/returns" className="footer-link">Políticas de devolución</Link></li>
+              <li><Link to="/terms" className="footer-link">Términos y condiciones</Link></li>
             </ul>
           </div>
+
           <div className="footer-section">
             <h4 className="footer-heading">Newsletter</h4>
             <p className="newsletter-description">
@@ -256,18 +324,13 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
+        
         <div className="footer-bottom">
           <p className="copyright">© 2024 Tecommers. Todos los derechos reservados.</p>
           <div className="footer-bottom-links">
-            <Link to="/privacy" className="footer-bottom-link">
-              Privacidad
-            </Link>
-            <Link to="/legal" className="footer-bottom-link">
-              Legal
-            </Link>
-            <Link to="/cookies" className="footer-bottom-link">
-              Cookies
-            </Link>
+            <Link to="/privacy" className="footer-bottom-link">Privacidad</Link>
+            <Link to="/legal" className="footer-bottom-link">Legal</Link>
+            <Link to="/cookies" className="footer-bottom-link">Cookies</Link>
           </div>
         </div>
       </footer>

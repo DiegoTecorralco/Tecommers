@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 interface Producto {
   id: number;
@@ -20,171 +21,171 @@ interface Producto {
 }
 
 const MueblesHogar: React.FC = () => {
+  const { addToCart, cartCount } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentFilter, setCurrentFilter] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
-  const [cartCount, setCartCount] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
   const [showEcoInfo, setShowEcoInfo] = useState(false);
   const [showLatestInfo, setShowLatestInfo] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const productos: Producto[] = [
-  {
-    id: 1,
-    nombre: "Sofá Seccional Moderno",
-    descripcion: "Sofá seccional 5 plazas en tela premium, diseño modular, patas de madera maciza, chaise longue.",
-    precio: 974.25,
-    precioOriginal: 1299.00,
-    imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["living", "latest"],
-    material: "tela",
-    estilo: "moderno",
-    modelo: "2024",
-    descuento: 25,
-    especificaciones: [
-      { icono: "chair", texto: "5 plazas" },
-      { icono: "palette", texto: "Tela Premium" },
-      { icono: "forest", texto: "Madera Maciza" },
-      { icono: "weekend", texto: "Modular" }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "Cama King Size Roble",
-    descripcion: "Cama king size en roble macizo, diseño rústico moderno, cabecera acolchada, estructura reforzada.",
-    precio: 719.20,
-    precioOriginal: 899.00,
-    imagen: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["bedroom", "latest"],
-    material: "madera",
-    estilo: "rustico",
-    modelo: "2024",
-    descuento: 20,
-    especificaciones: [
-      { icono: "bed", texto: "King Size" },
-      { icono: "forest", texto: "Roble Macizo" },
-      { icono: "straighten", texto: "200x200 cm" },
-      { icono: "king_bed", texto: "Cabecera Acolchada" }
-    ]
-  },
-  {
-    id: 3,
-    nombre: "Mesa Comedor Extensible",
-    descripcion: "Mesa de comedor extensible de vidrio templado, base de acero inoxidable, para 6-8 personas, fácil limpieza.",
-    precio: 509.15,
-    precioOriginal: 599.00,
-    imagen: "https://images.unsplash.com/photo-1604578762240-7e2f6361a0df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["dining"],
-    material: "vidrio",
-    estilo: "moderno",
-    modelo: "2023",
-    descuento: 15,
-    especificaciones: [
-      { icono: "table_restaurant", texto: "6-8 personas" },
-      { icono: "diamond", texto: "Vidrio Templado" },
-      { icono: "crop_din", texto: "Extensible" },
-      { icono: "cleaning_services", texto: "Fácil limpieza" }
-    ]
-  },
-  {
-    id: 4,
-    nombre: "Escritorio Ajustable",
-    descripcion: "Escritorio de oficina con altura ajustable eléctrica, diseño industrial, cable management, superficie anti-rayas.",
-    precio: 314.30,
-    precioOriginal: 449.00,
-    imagen: "https://images.unsplash.com/photo-1518455027359-f3f8164d6b9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["office", "latest"],
-    material: "MDF",
-    estilo: "industrial",
-    modelo: "2024",
-    descuento: 30,
-    especificaciones: [
-      { icono: "desk", texto: "Ajustable" },
-      { icono: "settings", texto: "Eléctrico" },
-      { icono: "cable", texto: "Cable Mgmt" },
-      { icono: "shield", texto: "Anti-rayas" }
-    ]
-  },
-  {
-    id: 5,
-    nombre: "Juego Terraza Rattan",
-    descripcion: "Juego de terraza 5 piezas en rattan sintético, resistente a la intemperie, cojines incluidos, mesa central.",
-    precio: 623.22,
-    precioOriginal: 799.00,
-    imagen: "https://images.unsplash.com/photo-1560185007-c5ca9d2c045d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["outdoor", "eco"],
-    material: "rattan",
-    estilo: "moderno",
-    modelo: "2023",
-    descuento: 22,
-    especificaciones: [
-      { icono: "deck", texto: "5 piezas" },
-      { icono: "eco", texto: "Rattan Sintético" },
-      { icono: "wb_sunny", texto: "Resistente" },
-      { icono: "table_restaurant", texto: "Mesa Central" }
-    ]
-  },
-  {
-    id: 6,
-    nombre: "Alfombra Persa Lana",
-    descripcion: "Alfombra persa hecha a mano en lana natural, diseño tradicional, tamaño 3x2 metros, antialérgica.",
-    precio: 286.18,
-    precioOriginal: 349.00,
-    imagen: "https://images.unsplash.com/photo-1581852017101-2eac541a11aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["decor"],
-    material: "lana",
-    estilo: "persa",
-    modelo: "2023",
-    descuento: 18,
-    especificaciones: [
-      { icono: "measuring_tape", texto: "3x2 metros" },
-      { icono: "texture", texto: "Lana Natural" },
-      { icono: "handshake", texto: "Hecha a mano" },
-      { icono: "allergy", texto: "Antialérgica" }
-    ]
-  },
-  {
-    id: 7,
-    nombre: "Lámpara de Pie Arco",
-    descripcion: "Lámpara de pie estilo arco, base de mármol, luz LED regulable, altura ajustable, 3 modos de luz.",
-    precio: 166.32,
-    precioOriginal: 189.00,
-    imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["decor", "latest"],
-    material: "metal",
-    estilo: "minimalista",
-    modelo: "2024",
-    descuento: 12,
-    especificaciones: [
-      { icono: "lightbulb", texto: "LED Regulable" },
-      { icono: "architecture", texto: "Diseño Arco" },
-      { icono: "height", texto: "Altura Ajust." },
-      { icono: "brightness_4", texto: "3 modos luz" }
-    ]
-  },
-  {
-    id: 8,
-    nombre: "Mueble TV Escandinavo",
-    descripcion: "Mueble para TV estilo escandinavo, almacenamiento abierto, diseño minimalista, hasta 65\", puertas corredizas.",
-    precio: 263.20,
-    precioOriginal: 329.00,
-    imagen: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    categoria: ["living"],
-    material: "MDP",
-    estilo: "escandinavo",
-    modelo: "2023",
-    descuento: 20,
-    especificaciones: [
-      { icono: "tv", texto: "Hasta 65\"" },
-      { icono: "shelves", texto: "Almacenamiento" },
-      { icono: "design_services", texto: "Escandinavo" },
-      { icono: "door_sliding", texto: "Puertas Corred." }
-    ]
-  }
-];
+    {
+      id: 1,
+      nombre: "Sofá Seccional Moderno",
+      descripcion: "Sofá seccional 5 plazas en tela premium, diseño modular, patas de madera maciza, chaise longue.",
+      precio: 974.25,
+      precioOriginal: 1299.00,
+      imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["living", "latest"],
+      material: "tela",
+      estilo: "moderno",
+      modelo: "2024",
+      descuento: 25,
+      especificaciones: [
+        { icono: "chair", texto: "5 plazas" },
+        { icono: "palette", texto: "Tela Premium" },
+        { icono: "forest", texto: "Madera Maciza" },
+        { icono: "weekend", texto: "Modular" }
+      ]
+    },
+    {
+      id: 2,
+      nombre: "Cama King Size Roble",
+      descripcion: "Cama king size en roble macizo, diseño rústico moderno, cabecera acolchada, estructura reforzada.",
+      precio: 719.20,
+      precioOriginal: 899.00,
+      imagen: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["bedroom", "latest"],
+      material: "madera",
+      estilo: "rustico",
+      modelo: "2024",
+      descuento: 20,
+      especificaciones: [
+        { icono: "bed", texto: "King Size" },
+        { icono: "forest", texto: "Roble Macizo" },
+        { icono: "straighten", texto: "200x200 cm" },
+        { icono: "king_bed", texto: "Cabecera Acolchada" }
+      ]
+    },
+    {
+      id: 3,
+      nombre: "Mesa Comedor Extensible",
+      descripcion: "Mesa de comedor extensible de vidrio templado, base de acero inoxidable, para 6-8 personas, fácil limpieza.",
+      precio: 509.15,
+      precioOriginal: 599.00,
+      imagen: "https://images.unsplash.com/photo-1604578762240-7e2f6361a0df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["dining"],
+      material: "vidrio",
+      estilo: "moderno",
+      modelo: "2023",
+      descuento: 15,
+      especificaciones: [
+        { icono: "table_restaurant", texto: "6-8 personas" },
+        { icono: "diamond", texto: "Vidrio Templado" },
+        { icono: "crop_din", texto: "Extensible" },
+        { icono: "cleaning_services", texto: "Fácil limpieza" }
+      ]
+    },
+    {
+      id: 4,
+      nombre: "Escritorio Ajustable",
+      descripcion: "Escritorio de oficina con altura ajustable eléctrica, diseño industrial, cable management, superficie anti-rayas.",
+      precio: 314.30,
+      precioOriginal: 449.00,
+      imagen: "https://images.unsplash.com/photo-1518455027359-f3f8164d6b9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["office", "latest"],
+      material: "MDF",
+      estilo: "industrial",
+      modelo: "2024",
+      descuento: 30,
+      especificaciones: [
+        { icono: "desk", texto: "Ajustable" },
+        { icono: "settings", texto: "Eléctrico" },
+        { icono: "cable", texto: "Cable Mgmt" },
+        { icono: "shield", texto: "Anti-rayas" }
+      ]
+    },
+    {
+      id: 5,
+      nombre: "Juego Terraza Rattan",
+      descripcion: "Juego de terraza 5 piezas en rattan sintético, resistente a la intemperie, cojines incluidos, mesa central.",
+      precio: 623.22,
+      precioOriginal: 799.00,
+      imagen: "https://images.unsplash.com/photo-1560185007-c5ca9d2c045d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["outdoor", "eco"],
+      material: "rattan",
+      estilo: "moderno",
+      modelo: "2023",
+      descuento: 22,
+      especificaciones: [
+        { icono: "deck", texto: "5 piezas" },
+        { icono: "eco", texto: "Rattan Sintético" },
+        { icono: "wb_sunny", texto: "Resistente" },
+        { icono: "table_restaurant", texto: "Mesa Central" }
+      ]
+    },
+    {
+      id: 6,
+      nombre: "Alfombra Persa Lana",
+      descripcion: "Alfombra persa hecha a mano en lana natural, diseño tradicional, tamaño 3x2 metros, antialérgica.",
+      precio: 286.18,
+      precioOriginal: 349.00,
+      imagen: "https://images.unsplash.com/photo-1581852017101-2eac541a11aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["decor"],
+      material: "lana",
+      estilo: "persa",
+      modelo: "2023",
+      descuento: 18,
+      especificaciones: [
+        { icono: "measuring_tape", texto: "3x2 metros" },
+        { icono: "texture", texto: "Lana Natural" },
+        { icono: "handshake", texto: "Hecha a mano" },
+        { icono: "allergy", texto: "Antialérgica" }
+      ]
+    },
+    {
+      id: 7,
+      nombre: "Lámpara de Pie Arco",
+      descripcion: "Lámpara de pie estilo arco, base de mármol, luz LED regulable, altura ajustable, 3 modos de luz.",
+      precio: 166.32,
+      precioOriginal: 189.00,
+      imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["decor", "latest"],
+      material: "metal",
+      estilo: "minimalista",
+      modelo: "2024",
+      descuento: 12,
+      especificaciones: [
+        { icono: "lightbulb", texto: "LED Regulable" },
+        { icono: "architecture", texto: "Diseño Arco" },
+        { icono: "height", texto: "Altura Ajust." },
+        { icono: "brightness_4", texto: "3 modos luz" }
+      ]
+    },
+    {
+      id: 8,
+      nombre: "Mueble TV Escandinavo",
+      descripcion: "Mueble para TV estilo escandinavo, almacenamiento abierto, diseño minimalista, hasta 65\", puertas corredizas.",
+      precio: 263.20,
+      precioOriginal: 329.00,
+      imagen: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      categoria: ["living"],
+      material: "MDP",
+      estilo: "escandinavo",
+      modelo: "2023",
+      descuento: 20,
+      especificaciones: [
+        { icono: "tv", texto: "Hasta 65\"" },
+        { icono: "shelves", texto: "Almacenamiento" },
+        { icono: "design_services", texto: "Escandinavo" },
+        { icono: "door_sliding", texto: "Puertas Corred." }
+      ]
+    }
+  ];
 
-  // Filtrar productos
   const filteredProducts = productos.filter(producto => {
     const matchesSearch = searchTerm === '' || 
       producto.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -203,7 +204,6 @@ const MueblesHogar: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Ordenar productos
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch(sortBy) {
       case 'price-asc':
@@ -227,10 +227,11 @@ const MueblesHogar: React.FC = () => {
   });
 
   const handleAddToCart = (producto: Producto) => {
-    setCartCount(prev => prev + 1);
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-  };
+  addToCart(producto, 'muebles');
+  setNotificationMessage(`${producto.nombre} agregado al carrito`);
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
+};
 
   const handleSearchSuggestion = (term: string) => {
     setSearchTerm(term);
@@ -250,7 +251,6 @@ const MueblesHogar: React.FC = () => {
     setSortBy('relevance');
   };
 
-  // Efecto para enfocar el input al cargar
   useEffect(() => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
@@ -259,7 +259,6 @@ const MueblesHogar: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* ================= NAVBAR ================= */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
         <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
@@ -292,14 +291,14 @@ const MueblesHogar: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
+            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">shopping_cart</span>
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
-            </button>
+            </Link>
             <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">person</span>
             </Link>
@@ -307,9 +306,7 @@ const MueblesHogar: React.FC = () => {
         </div>
       </header>
 
-      {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header de categoría */}
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight text-[#1a1a1a] mb-4">
             Muebles y Hogar
@@ -319,7 +316,6 @@ const MueblesHogar: React.FC = () => {
           </p>
         </div>
 
-        {/* Barra de búsqueda mejorada */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center bg-white border-3 border-[#cf2e2e] rounded-2xl p-3 mb-4 transition-all focus-within:shadow-[0_12px_30px_rgba(207,46,46,0.25)] focus-within:-translate-y-0.5">
             <span className="material-symbols-outlined text-[#cf2e2e] mx-4 text-3xl">search</span>
@@ -334,6 +330,7 @@ const MueblesHogar: React.FC = () => {
             <button 
               onClick={() => {
                 if (searchTerm) {
+                  setNotificationMessage(`Buscando: ${searchTerm}`);
                   setShowNotification(true);
                   setTimeout(() => setShowNotification(false), 2000);
                 }
@@ -344,7 +341,6 @@ const MueblesHogar: React.FC = () => {
             </button>
           </div>
 
-          {/* Sugerencias de búsqueda */}
           <div className="flex items-center flex-wrap gap-2.5 py-3">
             <span className="text-sm text-slate-500 font-medium">Buscar rápido:</span>
             {['Sofá', 'Cama', 'Mesa', 'Moderno', 'Escandinavo'].map((suggestion) => (
@@ -358,7 +354,6 @@ const MueblesHogar: React.FC = () => {
             ))}
           </div>
 
-          {/* Filtros rápidos */}
           <div className="flex flex-wrap gap-2">
             {[
               { id: 'all', label: 'Todos' },
@@ -394,7 +389,6 @@ const MueblesHogar: React.FC = () => {
           </div>
         </div>
 
-        {/* Información de resultados */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <span className="text-gray-600 mb-4 sm:mb-0">
             {sortedProducts.length} mueble{sortedProducts.length !== 1 ? 's' : ''} de {productos.length}
@@ -418,12 +412,10 @@ const MueblesHogar: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid de productos - Cards con estilo rojo como las anteriores */}
         {sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedProducts.map((producto) => (
               <div key={producto.id} className="bg-white border-2 border-gray-100 rounded-xl overflow-hidden hover:border-[#cf2e2e] hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-                {/* Imagen - proporción fija */}
                 <div className="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute top-3 left-3 bg-[#cf2e2e] text-white text-xs font-bold px-2 py-1 rounded z-10">
                     {producto.descuento}% OFF
@@ -435,19 +427,15 @@ const MueblesHogar: React.FC = () => {
                   />
                 </div>
                 
-                {/* Contenido - flex col con altura flexible */}
                 <div className="p-4 flex flex-col flex-grow">
-                  {/* Título - altura fija para 2 líneas */}
                   <h3 className="font-bold text-base mb-2 line-clamp-2 h-12">
                     {producto.nombre}
                   </h3>
                   
-                  {/* Descripción - altura fija para 2 líneas */}
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2 h-10">
                     {producto.descripcion}
                   </p>
                   
-                  {/* Especificaciones - TODAS EN ROJO como las anteriores */}
                   <div className="flex flex-wrap gap-1.5 mb-4 min-h-[60px]">
                     {producto.especificaciones.map((spec, index) => (
                       <div 
@@ -460,7 +448,6 @@ const MueblesHogar: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* Precio - siempre al final */}
                   <div className="mt-auto">
                     <div className="mb-3">
                       <span className="text-sm text-gray-400 line-through">
@@ -488,7 +475,6 @@ const MueblesHogar: React.FC = () => {
             ))}
           </div>
         ) : (
-          /* Mensaje sin resultados */
           <div className="text-center py-16">
             <div className="flex flex-col items-center gap-5 max-w-md mx-auto">
               <span className="material-symbols-outlined text-7xl text-[#cf2e2e]">weekend</span>
@@ -504,7 +490,6 @@ const MueblesHogar: React.FC = () => {
           </div>
         )}
 
-        {/* Botón ver colección completa */}
         <div className="text-center mt-16 pt-16 border-t-2 border-gray-200">
           <button className="px-8 py-4 bg-white text-[#cf2e2e] border-2 border-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors">
             Ver colección completa
@@ -512,11 +497,9 @@ const MueblesHogar: React.FC = () => {
         </div>
       </main>
 
-      {/* ================= FOOTER ================= */}
       <footer className="bg-[#1a1a1a] text-white py-20 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-            {/* Logo */}
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
                 <div className="relative w-[42px] h-8 flex items-center scale-[0.75] origin-left">
@@ -533,7 +516,6 @@ const MueblesHogar: React.FC = () => {
               </p>
             </div>
 
-            {/* Habitaciones */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Habitaciones
@@ -559,7 +541,6 @@ const MueblesHogar: React.FC = () => {
               </ul>
             </div>
 
-            {/* Estilos */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Estilos
@@ -578,7 +559,6 @@ const MueblesHogar: React.FC = () => {
               </ul>
             </div>
 
-            {/* Servicios */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Servicios
@@ -599,7 +579,6 @@ const MueblesHogar: React.FC = () => {
             </div>
           </div>
 
-          {/* Footer bottom */}
           <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
               © 2024 Tecommers Muebles y Hogar. Diseño y calidad certificada.
@@ -614,15 +593,13 @@ const MueblesHogar: React.FC = () => {
         </div>
       </footer>
 
-      {/* Notificación de búsqueda/carrito */}
       {showNotification && (
         <div className="fixed bottom-5 right-5 bg-white border-l-4 border-[#cf2e2e] p-4 rounded-lg shadow-xl z-50 flex items-center gap-3 max-w-sm animate-slide-in">
           <span className="material-symbols-outlined text-green-600">check_circle</span>
-          <span className="text-gray-800">Producto agregado al carrito</span>
+          <span className="text-gray-800">{notificationMessage}</span>
         </div>
       )}
 
-      {/* Modal muebles ecológicos */}
       {showEcoInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowEcoInfo(false)}>
           <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -655,7 +632,6 @@ const MueblesHogar: React.FC = () => {
         </div>
       )}
 
-      {/* Modal nuevos diseños */}
       {showLatestInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowLatestInfo(false)}>
           <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>

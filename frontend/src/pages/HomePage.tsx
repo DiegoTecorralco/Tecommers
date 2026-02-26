@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartCount } = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,17 +22,14 @@ const HomePage: React.FC = () => {
   };
 
   const categories = [
-    { id: 'electronica', name: 'Electrónica', icon: 'devices' },
-    { id: 'moda', name: 'Moda', icon: 'checkroom' },
-    { id: 'hogar', name: 'Hogar', icon: 'chair' },
-    { id: 'deportes', name: 'Deportes', icon: 'sports_soccer' },
+    { id: 'electrodomesticos', name: 'Electrodomésticos', icon: 'devices' },
+    { id: 'muebles-hogar', name: 'Muebles y Hogar', icon: 'chair' },
     { id: 'tecnologia', name: 'Tecnología', icon: 'computer' },
     { id: 'herramientas', name: 'Herramientas', icon: 'build' }
   ];
 
   return (
     <>
-      {/* ================= NAVBAR ================= */}
       <header className="header">
         <div className="header-container">
           <div className="logo-container">
@@ -51,9 +50,12 @@ const HomePage: React.FC = () => {
           </nav>
 
           <div className="icon-container">
-            <button className="icon-button" aria-label="Carrito de compras">
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
               <span className="material-symbols-outlined">shopping_cart</span>
-            </button>
+              {cartCount > 0 && (
+                <span className="cart-badge">{cartCount}</span>
+              )}
+            </Link>
             <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
               <span className="material-symbols-outlined">person</span>
             </Link>
@@ -72,7 +74,6 @@ const HomePage: React.FC = () => {
         </div>
       </header>
 
-      {/* ================= MENÚ LATERAL ================= */}
       <div className={`side-menu-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
       <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
         <div className="side-menu-header">
@@ -139,7 +140,7 @@ const HomePage: React.FC = () => {
               {categories.map((cat) => (
                 <Link 
                   key={cat.id} 
-                  to={`/category/${cat.id}`} 
+                  to={`/categories/${cat.id}`} 
                   className="side-menu-category-item" 
                   onClick={closeMenu}
                 >
@@ -171,7 +172,6 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ================= HERO SECTION ================= */}
       <section className="hero">
         <div className="hero-banner"></div>
         <div className="hero-overlay"></div>
@@ -200,7 +200,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* ================= MAIN CONTENT ================= */}
       <main className="main">
         <div className="section-header">
           <div>
@@ -213,8 +212,7 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="categories-grid">
-          {/* Tecnología */}
-          <Link to="/category/tecnologia" className="category-card">
+          <Link to="/categories/tecnologia" className="category-card">
             <div className="category-image-container">
               <img
                 alt="Tecnología"
@@ -227,8 +225,7 @@ const HomePage: React.FC = () => {
             <p className="category-description">Más de 500 productos</p>
           </Link>
 
-          {/* Electrodomésticos */}
-          <Link to="/category/electrodomesticos" className="category-card">
+          <Link to="/categories/electrodomesticos" className="category-card">
             <div className="category-image-container">
               <img
                 alt="Electrodomésticos"
@@ -241,8 +238,7 @@ const HomePage: React.FC = () => {
             <p className="category-description">Calidad garantizada</p>
           </Link>
 
-          {/* Muebles y Hogar */}
-          <Link to="/category/muebles-hogar" className="category-card">
+          <Link to="/categories/muebles-hogar" className="category-card">
             <div className="category-image-container">
               <img
                 alt="Muebles y Hogar"
@@ -255,8 +251,7 @@ const HomePage: React.FC = () => {
             <p className="category-description">Diseño para tu vida</p>
           </Link>
 
-          {/* Herramientas */}
-          <Link to="/category/herramientas" className="category-card">
+          <Link to="/categories/herramientas" className="category-card">
             <div className="category-image-container">
               <img
                 alt="Herramientas"
@@ -271,7 +266,6 @@ const HomePage: React.FC = () => {
         </div>
       </main>
 
-      {/* ================= FOOTER ================= */}
       <footer className="footer">
         <div className="footer-content">
           <div className="footer-section">
@@ -295,43 +289,23 @@ const HomePage: React.FC = () => {
             <h4 className="footer-heading">Empresa</h4>
             <ul className="footer-links">
               <li><Link to="/about" className="footer-link">Sobre Nosotros</Link></li>
-              <li><Link to="/branches" className="footer-link">Sucursales</Link></li>
-              <li><Link to="/careers" className="footer-link">Trabaja con nosotros</Link></li>
+              <li><Link to="/services" className="footer-link">Nuestros Servicios</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4 className="footer-heading">Soporte</h4>
+            <h4 className="footer-heading">Categorias</h4>
             <ul className="footer-links">
-              <li><Link to="/help" className="footer-link">Centro de ayuda</Link></li>
-              <li><Link to="/returns" className="footer-link">Políticas de devolución</Link></li>
-              <li><Link to="/terms" className="footer-link">Términos y condiciones</Link></li>
+              <li><Link to="/categories/tecnologia" className="footer-link">Tecnología</Link></li>
+              <li><Link to="/categories/electrodomesticos" className="footer-link">Electrodomésticos</Link></li>
+              <li><Link to="/categories/muebles-hogar" className="footer-link">Muebles y Hogar</Link></li>
+              <li><Link to="/categories/herramientas" className="footer-link">Herramientas</Link></li>
             </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4 className="footer-heading">Newsletter</h4>
-            <p className="newsletter-description">
-              Suscríbete para recibir ofertas exclusivas cada semana.
-            </p>
-            <div className="newsletter-form">
-              <input
-                className="newsletter-input"
-                placeholder="Tu correo electrónico"
-                type="email"
-              />
-              <button className="newsletter-button">Suscribirme</button>
-            </div>
           </div>
         </div>
         
         <div className="footer-bottom">
-          <p className="copyright">© 2024 Tecommers. Todos los derechos reservados.</p>
-          <div className="footer-bottom-links">
-            <Link to="/privacy" className="footer-bottom-link">Privacidad</Link>
-            <Link to="/legal" className="footer-bottom-link">Legal</Link>
-            <Link to="/cookies" className="footer-bottom-link">Cookies</Link>
-          </div>
+          <p className="copyright">© 2026 Tecommers. Todos los derechos reservados.</p>
         </div>
       </footer>
     </>

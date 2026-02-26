@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 interface Product {
   id: number;
@@ -13,6 +14,7 @@ interface Product {
 }
 
 const OffersPage: React.FC = () => {
+  const { addToCart, cartCount } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedSort, setSelectedSort] = useState('relevance');
@@ -22,7 +24,6 @@ const OffersPage: React.FC = () => {
   const [notificationMessage, setNotificationMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Inicializar productos
   useEffect(() => {
     const initialProducts: Product[] = [
       {
@@ -111,11 +112,9 @@ const OffersPage: React.FC = () => {
     setFilteredProducts(initialProducts);
   }, []);
 
-  // Filtrar y ordenar productos cuando cambian los filtros
   useEffect(() => {
     let result = [...products];
 
-    // Filtrar por término de búsqueda
     if (searchTerm) {
       result = result.filter(product => 
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -123,7 +122,6 @@ const OffersPage: React.FC = () => {
       );
     }
 
-    // Filtrar por categoría
     if (selectedFilter !== 'all') {
       switch(selectedFilter) {
         case 'high-discount':
@@ -141,12 +139,9 @@ const OffersPage: React.FC = () => {
       }
     }
 
-    // Ordenar
     result = sortProducts(result, selectedSort, searchTerm);
-
     setFilteredProducts(result);
 
-    // Mostrar notificación si hay búsqueda
     if (searchTerm) {
       setNotificationMessage(`${result.length} resultado${result.length !== 1 ? 's' : ''} para "${searchTerm}"`);
       setShowNotification(true);
@@ -188,14 +183,26 @@ const OffersPage: React.FC = () => {
 
   const highlightText = (text: string, search: string): string => {
     if (!search) return text;
-    
     const regex = new RegExp(`(${search})`, 'gi');
     return text.replace(regex, '<mark class="bg-red-200 text-inherit px-[2px] rounded-sm">$1</mark>');
   };
 
-  const handleAddToCart = (productName: string) => {
-    alert(`¡${productName} agregado al carrito!`);
+  const handleAddToCart = (product: Product) => {
+  const productToAdd = {
+    id: product.id,
+    nombre: product.name,
+    precio: parsePrice(product.price),
+    precioOriginal: parsePrice(product.oldPrice),
+    imagen: product.image,
+    marca: 'Oferta',
+    descuento: product.discount,
+    especificaciones: []
   };
+  addToCart(productToAdd, 'ofertas');
+  setNotificationMessage(`${product.name} agregado al carrito`);
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
+};
 
   const clearSearch = () => {
     setSearchTerm('');
@@ -216,10 +223,9 @@ const OffersPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* ================= NAVBAR PRINCIPAL ================= */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
         <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <svg className="h-10 w-auto" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
@@ -228,7 +234,7 @@ const OffersPage: React.FC = () => {
             <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
               TECOMMERS
             </span>
-          </div>
+          </Link>
 
           <nav className="flex items-center gap-10">
             <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
@@ -249,9 +255,14 @@ const OffersPage: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
+            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">shopping_cart</span>
-            </button>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
             <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">person</span>
             </Link>
@@ -259,7 +270,6 @@ const OffersPage: React.FC = () => {
         </div>
       </header>
 
-      {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-12 w-full">
         <div className="text-center mb-12">
           <h1 className="text-[#ec1313] text-5xl md:text-7xl font-black uppercase tracking-tight mb-2">
@@ -269,7 +279,6 @@ const OffersPage: React.FC = () => {
             Aprovecha descuentos exclusivos por tiempo limitado
           </p>
 
-          {/* Barra de búsqueda */}
           <div className="max-w-4xl mx-auto mt-8 mb-6">
             <div className="flex items-center bg-white border-2 border-slate-200 rounded-xl p-2 mb-4 transition-all focus-within:border-[#ec1313] focus-within:shadow-[0_0_0_3px_rgba(207,46,46,0.1)]">
               <span className="material-symbols-outlined text-slate-500 mx-3">search</span>
@@ -289,7 +298,6 @@ const OffersPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Filtros rápidos */}
             <div className="flex flex-wrap gap-2 justify-center">
               {[
                 { id: 'all', label: 'Todas las ofertas' },
@@ -314,7 +322,6 @@ const OffersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Información de resultados */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 py-4 border-b border-slate-200">
           <span className="text-sm text-slate-500 font-medium">
             {filteredProducts.length} oferta{filteredProducts.length !== 1 ? 's' : ''} de {products.length}
@@ -336,7 +343,6 @@ const OffersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid de productos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredProducts.map(product => (
             <div
@@ -371,7 +377,7 @@ const OffersPage: React.FC = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleAddToCart(product.name)}
+                  onClick={() => handleAddToCart(product)}
                   className="mt-4 w-full py-2.5 bg-[#ec1313] text-white text-xs font-bold rounded-lg border-none cursor-pointer transition-colors uppercase tracking-wider hover:bg-[#b91c1c]"
                 >
                   Comprar ahora
@@ -381,7 +387,6 @@ const OffersPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Mensaje sin resultados */}
         {filteredProducts.length === 0 && (
           <div className="text-center py-16 px-8 bg-slate-50 rounded-xl my-8">
             <div className="max-w-md mx-auto">
@@ -398,11 +403,10 @@ const OffersPage: React.FC = () => {
           </div>
         )}
 
-        {/* Notificación de búsqueda */}
         {showNotification && (
           <div className="fixed top-[100px] right-5 bg-white border-l-4 py-4 px-5 rounded-lg shadow-xl flex items-center gap-3 z-50 max-w-[350px] transform translate-x-0 transition-transform duration-300"
                style={{ borderLeftColor: '#ec1313' }}>
-            <span className="material-symbols-outlined text-[#ec1313]">search</span>
+            <span className="material-symbols-outlined text-[#ec1313]">check_circle</span>
             <span>{notificationMessage}</span>
           </div>
         )}
@@ -414,7 +418,6 @@ const OffersPage: React.FC = () => {
         </div>
       </main>
 
-      {/* ================= FOOTER ================= */}
       <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="flex flex-col">

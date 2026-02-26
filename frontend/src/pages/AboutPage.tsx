@@ -1,13 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 const AboutPage: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartCount } = useCart();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = 'unset';
+  };
+
+  const categories = [
+    { id: 'electrodomesticos', name: 'Electrodomésticos', icon: 'devices' },
+    { id: 'muebles-hogar', name: 'Muebles y Hogar', icon: 'chair' },
+    { id: 'tecnologia', name: 'Tecnología', icon: 'computer' },
+    { id: 'herramientas', name: 'Herramientas', icon: 'build' }
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* ================= NAVBAR PRINCIPAL ================= */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
         <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <svg className="h-10 w-auto" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
@@ -16,36 +41,151 @@ const AboutPage: React.FC = () => {
             <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
               TECOMMERS
             </span>
-          </div>
+          </Link>
 
-          <nav className="flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
+          <nav className="hidden lg:flex items-center gap-10">
+            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
               Home
             </Link>
-            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
+            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
               Categorías
             </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
+            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
               Ofertas
             </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
+            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
               Servicios
             </Link>
-            <Link to="/about" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors no-underline text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
+            <Link to="/about" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
               Nosotros
             </Link>
           </nav>
 
           <div className="flex items-center gap-4">
-            <button className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
+            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">shopping_cart</span>
-            </button>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
             <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">person</span>
             </Link>
+            <div className="hamburger-menu lg:hidden">
+              <button 
+                className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
+                onClick={toggleMenu}
+                aria-label="Menú"
+              >
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
+
+      {/* ================= MENÚ LATERAL ================= */}
+      <div className={`side-menu-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
+      <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
+        <div className="side-menu-header">
+          <div className="side-menu-user">
+            <div className="side-menu-avatar">
+              <span className="material-symbols-outlined">account_circle</span>
+            </div>
+            <div className="side-menu-user-info">
+              <h3>Invitado</h3>
+              <p>Inicia sesión para más opciones</p>
+            </div>
+          </div>
+          <button className="side-menu-close" onClick={closeMenu}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="side-menu-search">
+          <div className="side-menu-search-box">
+            <span className="material-symbols-outlined">search</span>
+            <input 
+              type="text" 
+              className="side-menu-search-input" 
+              placeholder="Buscar productos..." 
+            />
+          </div>
+        </div>
+
+        <div className="side-menu-nav">
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Menú Principal</h4>
+            <ul className="side-menu-links">
+              <li>
+                <Link to="/" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">home</span>Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">category</span>Categorías
+                </Link>
+              </li>
+              <li>
+                <Link to="/offers" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">local_offer</span>Ofertas
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">build</span>Servicios
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="side-menu-link active" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">info</span>Nosotros
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Categorías Populares</h4>
+            <div className="side-menu-category-grid">
+              {categories.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  to={`/categories/${cat.id}`} 
+                  className="side-menu-category-item" 
+                  onClick={closeMenu}
+                >
+                  <div className="category-icon">
+                    <span className="material-symbols-outlined">{cat.icon}</span>
+                  </div>
+                  <span className="category-name">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="side-menu-footer">
+          <div className="side-menu-footer-links">
+            <Link to="/help" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">help</span>
+              Centro de Ayuda
+            </Link>
+            <Link to="/login" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">login</span>
+              Iniciar Sesión
+            </Link>
+            <Link to="/register" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">app_registration</span>
+              Registrarse
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="flex-1 flex justify-center px-4 md:px-0 py-10">

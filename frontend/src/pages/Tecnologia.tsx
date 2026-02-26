@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 interface Producto {
   id: number;
@@ -21,10 +22,10 @@ interface Producto {
 }
 
 const Tecnologia: React.FC = () => {
+  const { addToCart, cartCount } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentFilter, setCurrentFilter] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
-  const [cartCount, setCartCount] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showLatestInfo, setShowLatestInfo] = useState(false);
@@ -188,7 +189,6 @@ const Tecnologia: React.FC = () => {
     }
   ];
 
-  // Filtrar productos
   const filteredProducts = productos.filter(producto => {
     const matchesSearch = searchTerm === '' || 
       producto.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -203,7 +203,6 @@ const Tecnologia: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Ordenar productos
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch(sortBy) {
       case 'price-asc':
@@ -222,11 +221,11 @@ const Tecnologia: React.FC = () => {
   });
 
   const handleAddToCart = (producto: Producto) => {
-    setCartCount(prev => prev + 1);
-    setNotificationMessage(`${producto.nombre} agregado al carrito`);
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-  };
+  addToCart(producto, 'tecnologia');
+  setNotificationMessage(`${producto.nombre} agregado al carrito`);
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
+};
 
   const handleSearchSuggestion = (term: string) => {
     setSearchTerm(term);
@@ -241,7 +240,6 @@ const Tecnologia: React.FC = () => {
     setSortBy('relevance');
   };
 
-  // Efecto para enfocar el input al cargar
   useEffect(() => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
@@ -250,7 +248,6 @@ const Tecnologia: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* ================= NAVBAR ================= */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
         <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
@@ -283,14 +280,14 @@ const Tecnologia: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
+            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">shopping_cart</span>
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
-            </button>
+            </Link>
             <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">person</span>
             </Link>
@@ -298,9 +295,7 @@ const Tecnologia: React.FC = () => {
         </div>
       </header>
 
-      {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header de categoría */}
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight text-[#1a1a1a] mb-4">
             Tecnología
@@ -310,7 +305,6 @@ const Tecnologia: React.FC = () => {
           </p>
         </div>
 
-        {/* Barra de búsqueda mejorada */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center bg-white border-3 border-[#cf2e2e] rounded-2xl p-3 mb-4 transition-all focus-within:shadow-[0_12px_30px_rgba(207,46,46,0.25)] focus-within:-translate-y-0.5">
             <span className="material-symbols-outlined text-[#cf2e2e] mx-4 text-3xl">search</span>
@@ -336,7 +330,6 @@ const Tecnologia: React.FC = () => {
             </button>
           </div>
 
-          {/* Sugerencias de búsqueda */}
           <div className="flex items-center flex-wrap gap-2.5 py-3">
             <span className="text-sm text-slate-500 font-medium">Buscar rápido:</span>
             {['iPhone', 'Samsung', 'Gaming', 'Apple Watch', 'Audífonos'].map((suggestion) => (
@@ -350,7 +343,6 @@ const Tecnologia: React.FC = () => {
             ))}
           </div>
 
-          {/* Filtros rápidos */}
           <div className="flex flex-wrap gap-2">
             {[
               { id: 'all', label: 'Todos' },
@@ -385,7 +377,6 @@ const Tecnologia: React.FC = () => {
           </div>
         </div>
 
-        {/* Información de resultados */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <span className="text-gray-600 mb-4 sm:mb-0">
             {sortedProducts.length} producto{sortedProducts.length !== 1 ? 's' : ''} de {productos.length}
@@ -408,7 +399,6 @@ const Tecnologia: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid de productos */}
         {sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedProducts.map((producto) => (
@@ -428,17 +418,15 @@ const Tecnologia: React.FC = () => {
                   <h3 className="font-bold text-base mb-2 line-clamp-2">{producto.nombre}</h3>
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{producto.descripcion}</p>
                   
-                  {/* Especificaciones */}
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {producto.especificaciones.map((spec, index) => (
-                      <div key={index} className="flex items-center gap-1 text-xs text-[#cf2e2e] bg-[#fee] px-2 py-1 rounded-lg border border-[#fcc]">
+                      <div key={index} className="flex items-center gap-1 text-xs text-white bg-[#ec1313] px-2 py-1 rounded-lg">
                         <span className="material-symbols-outlined text-xs">{spec.icono}</span>
                         <span className="whitespace-nowrap">{spec.texto}</span>
                       </div>
                     ))}
                   </div>
 
-                  {/* Precio */}
                   <div className="mb-4">
                     <span className="text-sm text-gray-400 line-through">
                       ${producto.precioOriginal.toFixed(2)}
@@ -464,7 +452,6 @@ const Tecnologia: React.FC = () => {
             ))}
           </div>
         ) : (
-          /* Mensaje sin resultados */
           <div className="text-center py-16">
             <div className="flex flex-col items-center gap-5 max-w-md mx-auto">
               <span className="material-symbols-outlined text-7xl text-[#cf2e2e]">devices</span>
@@ -480,7 +467,6 @@ const Tecnologia: React.FC = () => {
           </div>
         )}
 
-        {/* Botón ver catálogo */}
         <div className="text-center mt-16 pt-16 border-t-2 border-gray-200">
           <button className="px-8 py-4 bg-white text-[#cf2e2e] border-2 border-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors">
             Ver catálogo completo
@@ -488,11 +474,9 @@ const Tecnologia: React.FC = () => {
         </div>
       </main>
 
-      {/* ================= FOOTER ================= */}
       <footer className="bg-[#1a1a1a] text-white py-20 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-            {/* Logo */}
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
                 <div className="relative w-[42px] h-8 flex items-center scale-[0.75] origin-left">
@@ -509,7 +493,6 @@ const Tecnologia: React.FC = () => {
               </p>
             </div>
 
-            {/* Categorías */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Categorías
@@ -528,7 +511,6 @@ const Tecnologia: React.FC = () => {
               </ul>
             </div>
 
-            {/* Marcas */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Marcas
@@ -547,7 +529,6 @@ const Tecnologia: React.FC = () => {
               </ul>
             </div>
 
-            {/* Soporte */}
             <div>
               <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
                 Soporte Técnico
@@ -568,7 +549,6 @@ const Tecnologia: React.FC = () => {
             </div>
           </div>
 
-          {/* Footer bottom */}
           <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
               © 2024 Tecommers Tecnología. Innovación certificada.
@@ -583,15 +563,13 @@ const Tecnologia: React.FC = () => {
         </div>
       </footer>
 
-      {/* Notificación de búsqueda */}
       {showNotification && (
         <div className="fixed bottom-5 right-5 bg-white border-l-4 border-[#cf2e2e] p-4 rounded-lg shadow-xl z-50 flex items-center gap-3 max-w-sm animate-slide-in">
-          <span className="material-symbols-outlined text-[#cf2e2e]">check_circle</span>
+          <span className="material-symbols-outlined text-green-600">check_circle</span>
           <span className="text-gray-800">{notificationMessage}</span>
         </div>
       )}
 
-      {/* Modal últimos modelos */}
       {showLatestInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowLatestInfo(false)}>
           <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -624,7 +602,6 @@ const Tecnologia: React.FC = () => {
         </div>
       )}
 
-      {/* Modal gaming */}
       {showGamingInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowGamingInfo(false)}>
           <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 
 interface Service {
   id: number;
@@ -12,6 +13,7 @@ interface Service {
 const ServicesPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -80,51 +82,40 @@ const ServicesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#cf2e2e" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Home
-            </Link>
-            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link active">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
-            <div className="hamburger-menu lg:hidden">
+            <div className="hamburger-menu">
               <button 
                 className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
                 onClick={toggleMenu}
@@ -248,16 +239,18 @@ const ServicesPage: React.FC = () => {
           {services.map((service) => (
             <div
               key={service.id}
-              className="bg-[#f2f2f2] p-8 rounded-2xl flex flex-col items-center text-center hover:shadow-lg transition-shadow cursor-pointer group"
+              className="p-8 rounded-2xl flex flex-col items-center text-center hover:shadow-lg transition-shadow cursor-pointer group"
+              style={{ backgroundColor: 'var(--bg-secondary)' }}
             >
-              <div className="w-full aspect-[4/3] bg-gray-300 rounded-xl mb-6 overflow-hidden">
+              <div className="w-full aspect-[4/3] rounded-xl mb-6 overflow-hidden"
+                   style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                 <img
                   src={service.image}
                   alt={service.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
+              <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
                 {service.name}
               </h3>
               <p className="text-sm font-semibold text-[#ec1313]">
@@ -268,31 +261,64 @@ const ServicesPage: React.FC = () => {
         </div>
 
         <div className="max-w-4xl mx-auto my-24 text-center">
-          <h2 className="text-3xl font-bold text-[#1a1a1a] mb-8">
+          <h2 className="text-3xl font-bold mb-8" style={{ color: 'var(--text-primary)' }}>
             Algunas de las cosas que puedes hacer aquí
           </h2>
-          <p className="text-slate-500 leading-relaxed text-lg">
+          <p className="leading-relaxed text-lg" style={{ color: 'var(--text-secondary)' }}>
             Nuestra plataforma de servicios está diseñada para brindarte autonomía y seguridad en cada paso de tu experiencia de compra. Desde el seguimiento en tiempo real hasta la gestión de reembolsos, estamos comprometidos con tu satisfacción total y soporte 24/7.
           </p>
         </div>
       </main>
 
-      <footer className="bg-white border-t border-slate-100 py-10 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-slate-400">
-            © 2024 Tecommers. Todos los derechos reservados.
-          </p>
-          <div className="flex gap-8 text-sm text-slate-400">
-            <Link to="/terms" className="text-slate-400 hover:text-[#ec1313] transition-colors no-underline">
-              Términos y condiciones
-            </Link>
-            <Link to="/privacy" className="text-slate-400 hover:text-[#ec1313] transition-colors no-underline">
-              Política de privacidad
-            </Link>
-            <Link to="/cookies" className="text-slate-400 hover:text-[#ec1313] transition-colors no-underline">
-              Cookies
-            </Link>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
+                </div>
+              </div>
+              <span className="footer-logo-text">TECOMMERS</span>
+            </div>
+            <p className="footer-description">
+              Tu aliado estratégico en compras online. Calidad, rapidez y confianza en cada uno de
+              tus pedidos.
+            </p>
           </div>
+          
+          <div className="footer-section">
+            <h4 className="footer-heading">Empresa</h4>
+            <ul className="footer-links">
+              <li><Link to="/about" className="footer-link">Sobre Nosotros</Link></li>
+              <li><Link to="/services" className="footer-link">Nuestros Servicios</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Categorias</h4>
+            <ul className="footer-links">
+              <li><Link to="/categories/tecnologia" className="footer-link">Tecnología</Link></li>
+              <li><Link to="/categories/electrodomesticos" className="footer-link">Electrodomésticos</Link></li>
+              <li><Link to="/categories/muebles-hogar" className="footer-link">Muebles y Hogar</Link></li>
+              <li><Link to="/categories/herramientas" className="footer-link">Herramientas</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Legal</h4>
+            <ul className="footer-links">
+              <li><Link to="/terms" className="footer-link">Términos y condiciones</Link></li>
+              <li><Link to="/privacy" className="footer-link">Política de privacidad</Link></li>
+              <li><Link to="/cookies" className="footer-link">Cookies</Link></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="footer-bottom">
+          <p className="copyright">© 2024 Tecommers. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

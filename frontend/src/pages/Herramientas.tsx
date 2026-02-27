@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 
 interface Producto {
   id: number;
@@ -23,6 +24,8 @@ interface Producto {
 
 const Herramientas: React.FC = () => {
   const { addToCart, cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentFilter, setCurrentFilter] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
@@ -31,6 +34,27 @@ const Herramientas: React.FC = () => {
   const [showProfessionalInfo, setShowProfessionalInfo] = useState(false);
   const [showNewToolsInfo, setShowNewToolsInfo] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = 'unset';
+  };
+
+  const categories = [
+    { id: 'electrodomesticos', name: 'Electrodomésticos', icon: 'devices' },
+    { id: 'muebles-hogar', name: 'Muebles y Hogar', icon: 'chair' },
+    { id: 'tecnologia', name: 'Tecnología', icon: 'computer' },
+    { id: 'herramientas', name: 'Herramientas', icon: 'build' }
+  ];
 
   const productos: Producto[] = [
     {
@@ -222,11 +246,11 @@ const Herramientas: React.FC = () => {
   });
 
   const handleAddToCart = (producto: Producto) => {
-  addToCart(producto, 'herramientas');
-  setNotificationMessage(`${producto.nombre} agregado al carrito`);
-  setShowNotification(true);
-  setTimeout(() => setShowNotification(false), 3000);
-};
+    addToCart(producto, 'herramientas');
+    setNotificationMessage(`${producto.nombre} agregado al carrito`);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  };
 
   const handleSearchSuggestion = (term: string) => {
     setSearchTerm(term);
@@ -256,66 +280,166 @@ const Herramientas: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#cf2e2e" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2 relative">
-              Home
-            </Link>
-            <Link to="/categories" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link active">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
+            <div className="hamburger-menu">
+              <button 
+                className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
+                onClick={toggleMenu}
+                aria-label="Menú"
+              >
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
+      <div className={`side-menu-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
+      <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
+        <div className="side-menu-header">
+          <div className="side-menu-user">
+            <div className="side-menu-avatar">
+              <span className="material-symbols-outlined">account_circle</span>
+            </div>
+            <div className="side-menu-user-info">
+              <h3>Invitado</h3>
+              <p>Inicia sesión para más opciones</p>
+            </div>
+          </div>
+          <button className="side-menu-close" onClick={closeMenu}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="side-menu-search">
+          <div className="side-menu-search-box">
+            <span className="material-symbols-outlined">search</span>
+            <input 
+              type="text" 
+              className="side-menu-search-input" 
+              placeholder="Buscar productos..." 
+            />
+          </div>
+        </div>
+
+        <div className="side-menu-nav">
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Menú Principal</h4>
+            <ul className="side-menu-links">
+              <li>
+                <Link to="/" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">home</span>Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="side-menu-link active" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">category</span>Categorías
+                </Link>
+              </li>
+              <li>
+                <Link to="/offers" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">local_offer</span>Ofertas
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">build</span>Servicios
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">info</span>Nosotros
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Categorías Populares</h4>
+            <div className="side-menu-category-grid">
+              {categories.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  to={`/categories/${cat.id}`} 
+                  className="side-menu-category-item" 
+                  onClick={closeMenu}
+                >
+                  <div className="category-icon">
+                    <span className="material-symbols-outlined">{cat.icon}</span>
+                  </div>
+                  <span className="category-name">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="side-menu-footer">
+          <div className="side-menu-footer-links">
+            <Link to="/help" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">help</span>
+              Centro de Ayuda
+            </Link>
+            <Link to="/login" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">login</span>
+              Iniciar Sesión
+            </Link>
+            <Link to="/register" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">app_registration</span>
+              Registrarse
+            </Link>
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight text-[#1a1a1a] mb-4">
+          <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight mb-4"
+              style={{ color: 'var(--text-primary)' }}>
             Herramientas
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
             Calidad profesional para cada proyecto
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex items-center bg-white border-3 border-[#cf2e2e] rounded-2xl p-3 mb-4 transition-all focus-within:shadow-[0_12px_30px_rgba(207,46,46,0.25)] focus-within:-translate-y-0.5">
+          <div className="flex items-center border-3 border-[#cf2e2e] rounded-2xl p-3 mb-4 transition-all focus-within:shadow-[0_12px_30px_rgba(207,46,46,0.25)] focus-within:-translate-y-0.5"
+               style={{ backgroundColor: 'var(--card-bg)' }}>
             <span className="material-symbols-outlined text-[#cf2e2e] mx-4 text-3xl">search</span>
             <input
               ref={searchInputRef}
@@ -323,7 +447,11 @@ const Herramientas: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar taladros, sierras, llaves, marcas, tipo..."
-              className="flex-1 border-none outline-none text-lg py-4 text-[#1a1a1a] font-medium placeholder:text-slate-400"
+              className="flex-1 border-none outline-none text-lg py-4 font-medium"
+              style={{ 
+                backgroundColor: 'transparent', 
+                color: 'var(--text-primary)'
+              }}
             />
             <button 
               onClick={() => {
@@ -340,12 +468,17 @@ const Herramientas: React.FC = () => {
           </div>
 
           <div className="flex items-center flex-wrap gap-2.5 py-3">
-            <span className="text-sm text-slate-500 font-medium">Buscar rápido:</span>
+            <span className="text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>Buscar rápido:</span>
             {['Taladro', 'Bosch', 'Sierra', 'Makita', 'Jardinería'].map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => handleSearchSuggestion(suggestion)}
-                className="bg-[#fee] border border-[#fcc] rounded-full px-4 py-2 text-sm text-[#cf2e2e] cursor-pointer transition-all hover:bg-[#fdd] hover:-translate-y-0.5 font-medium"
+                className="border rounded-full px-4 py-2 text-sm cursor-pointer transition-all hover:-translate-y-0.5 font-medium"
+                style={{ 
+                  backgroundColor: 'rgba(236, 19, 19, 0.1)', 
+                  borderColor: 'rgba(236, 19, 19, 0.3)',
+                  color: '#ec1313'
+                }}
               >
                 {suggestion}
               </button>
@@ -377,8 +510,13 @@ const Herramientas: React.FC = () => {
                 className={`px-4 py-2 text-sm font-medium border-2 rounded-full transition-colors ${
                   currentFilter === filter.id
                     ? 'bg-[#cf2e2e] text-white border-[#cf2e2e]'
-                    : 'border-gray-200 text-gray-700 hover:border-[#cf2e2e] hover:text-[#cf2e2e]'
+                    : ''
                 }`}
+                style={currentFilter !== filter.id ? { 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-secondary)',
+                  backgroundColor: 'transparent'
+                } : {}}
               >
                 {filter.label}
               </button>
@@ -387,16 +525,21 @@ const Herramientas: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-          <span className="text-gray-600 mb-4 sm:mb-0">
+          <span className="mb-4 sm:mb-0" style={{ color: 'var(--text-secondary)' }}>
             {sortedProducts.length} herramienta{sortedProducts.length !== 1 ? 's' : ''} de {productos.length}
           </span>
           <div className="flex items-center gap-3">
-            <label htmlFor="sort" className="text-sm text-gray-600 whitespace-nowrap">Ordenar por:</label>
+            <label htmlFor="sort" className="text-sm whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>Ordenar por:</label>
             <select
               id="sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-[#cf2e2e] focus:outline-none"
+              className="px-4 py-2 border-2 rounded-lg text-sm focus:border-[#cf2e2e] focus:outline-none"
+              style={{ 
+                backgroundColor: 'var(--input-bg)', 
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
             >
               <option value="relevance">Relevancia</option>
               <option value="price-asc">Precio: menor a mayor</option>
@@ -412,8 +555,13 @@ const Herramientas: React.FC = () => {
         {sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedProducts.map((producto) => (
-              <div key={producto.id} className="bg-white border-2 border-gray-100 rounded-xl overflow-hidden hover:border-[#cf2e2e] hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-                <div className="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
+              <div key={producto.id} 
+                   className="border-2 rounded-xl overflow-hidden hover:border-[#cf2e2e] hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                   style={{ 
+                     backgroundColor: 'var(--card-bg)', 
+                     borderColor: 'var(--border-color)' 
+                   }}>
+                <div className="relative aspect-square overflow-hidden flex-shrink-0" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <div className="absolute top-3 left-3 bg-[#cf2e2e] text-white text-xs font-bold px-2 py-1 rounded z-10">
                     {producto.descuento}% OFF
                   </div>
@@ -425,11 +573,11 @@ const Herramientas: React.FC = () => {
                 </div>
                 
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="font-bold text-base mb-2 line-clamp-2 h-12">
+                  <h3 className="font-bold text-base mb-2 line-clamp-2 h-12" style={{ color: 'var(--text-primary)' }}>
                     {producto.nombre}
                   </h3>
                   
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2 h-10">
+                  <p className="text-sm mb-3 line-clamp-2 h-10" style={{ color: 'var(--text-secondary)' }}>
                     {producto.descripcion}
                   </p>
                   
@@ -451,7 +599,7 @@ const Herramientas: React.FC = () => {
 
                   <div className="mt-auto">
                     <div className="mb-3">
-                      <span className="text-sm text-gray-400 line-through">
+                      <span className="text-sm line-through" style={{ color: 'var(--text-tertiary)' }}>
                         ${producto.precioOriginal.toFixed(2)}
                       </span>
                       <div className="flex items-end gap-2">
@@ -479,11 +627,12 @@ const Herramientas: React.FC = () => {
           <div className="text-center py-16">
             <div className="flex flex-col items-center gap-5 max-w-md mx-auto">
               <span className="material-symbols-outlined text-7xl text-[#cf2e2e]">construction</span>
-              <h3 className="text-2xl font-bold text-[#1a1a1a]">No se encontraron herramientas</h3>
-              <p className="text-gray-600">Intenta con otros términos de búsqueda o ajusta los filtros</p>
+              <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>No se encontraron herramientas</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>Intenta con otros términos de búsqueda o ajusta los filtros</p>
               <button
                 onClick={clearSearch}
-                className="px-6 py-3 bg-white text-[#cf2e2e] border-2 border-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors"
+                className="px-6 py-3 border-2 border-[#cf2e2e] text-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors"
+                style={{ backgroundColor: 'transparent' }}
               >
                 Mostrar todas
               </button>
@@ -491,136 +640,131 @@ const Herramientas: React.FC = () => {
           </div>
         )}
 
-        <div className="text-center mt-16 pt-16 border-t-2 border-gray-200">
-          <button className="px-8 py-4 bg-white text-[#cf2e2e] border-2 border-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors">
+        <div className="text-center mt-16 pt-16 border-t-2" style={{ borderColor: 'var(--border-color)' }}>
+          <button className="px-8 py-4 border-2 border-[#cf2e2e] text-[#cf2e2e] rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-[#cf2e2e] hover:text-white transition-colors"
+                  style={{ backgroundColor: 'transparent' }}>
             Ver más herramientas
           </button>
         </div>
       </main>
 
-      <footer className="bg-[#1a1a1a] text-white py-20 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-3">
-                <div className="relative w-[42px] h-8 flex items-center scale-[0.75] origin-left">
-                  <div className="absolute left-0 w-full h-full bg-[#ec1313] clip-path-[polygon(10%_0,90%_0,80%_25%,55%_25%,45%_100%,25%_100%,35%_25%,0_25%)]"></div>
-                  <div className="absolute right-0 top-[40%] w-[35%] flex flex-col gap-[3px]">
-                    <div className="h-[5px] bg-white/40 skew-x-[-15deg]"></div>
-                    <div className="h-[5px] bg-[#ec1313] skew-x-[-15deg]"></div>
-                  </div>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
                 </div>
-                <span className="text-xl font-black -tracking-wide text-white">TECOMMERS</span>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Herramientas profesionales para trabajadores exigentes. Calidad y durabilidad garantizada.
-              </p>
+              <span className="footer-logo-text">TECOMMERS</span>
             </div>
-
-            <div>
-              <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
-                Categorías
-              </h4>
-              <ul className="space-y-4 text-gray-400 text-sm font-medium">
-                {[
-                  { label: 'Herramientas Eléctricas', filter: 'power-tools' },
-                  { label: 'Herramientas Manuales', filter: 'hand-tools' },
-                  { label: 'Jardinería', filter: 'gardening' },
-                  { label: 'Medición', filter: 'measurement' },
-                  { label: 'Seguridad', filter: 'safety' },
-                  { label: 'Profesionales', filter: 'professional' }
-                ].map((item) => (
-                  <li key={item.label}>
-                    <button
-                      onClick={() => setCurrentFilter(item.filter)}
-                      className="hover:text-[#ec1313] transition-colors"
-                    >
-                      {item.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
-                Marcas
-              </h4>
-              <ul className="space-y-4 text-gray-400 text-sm font-medium">
-                {['Bosch', 'Makita', 'DEWALT', 'Stanley', 'Husqvarna', '3M', 'Black+Decker', 'Werner'].map((item) => (
-                  <li key={item}>
-                    <button
-                      onClick={() => handleSearchSuggestion(item)}
-                      className="hover:text-[#ec1313] transition-colors"
-                    >
-                      {item}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-black mb-8 uppercase tracking-[0.2em] text-xs border-b border-white/10 pb-4">
-                Garantía
-              </h4>
-              <p className="text-gray-400 text-sm mb-4">
-                Todas nuestras herramientas incluyen garantía de 2 años y soporte técnico especializado.
-              </p>
-              <div className="flex flex-col gap-3">
-                <input
-                  type="email"
-                  placeholder="Email para ofertas"
-                  className="bg-white/5 border-none px-5 py-3 text-sm text-white rounded-sm focus:shadow-[0_0_0_1px_#ec1313] focus:outline-none"
-                />
-                <button className="bg-[#ec1313] px-5 py-3 font-black text-xs uppercase tracking-widest rounded-sm hover:bg-[#dc2626] transition-colors">
-                  SUSCRIBIR
-                </button>
-              </div>
-            </div>
+            <p className="footer-description">
+              Herramientas profesionales para trabajadores exigentes. Calidad y durabilidad garantizada.
+            </p>
           </div>
 
-          <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
-              © 2024 Tecommers Herramientas. Todos los derechos reservados.
+          <div className="footer-section">
+            <h4 className="footer-heading">Categorías</h4>
+            <ul className="footer-links">
+              {[
+                { label: 'Herramientas Eléctricas', filter: 'power-tools' },
+                { label: 'Herramientas Manuales', filter: 'hand-tools' },
+                { label: 'Jardinería', filter: 'gardening' },
+                { label: 'Medición', filter: 'measurement' },
+                { label: 'Seguridad', filter: 'safety' },
+                { label: 'Profesionales', filter: 'professional' }
+              ].map((item) => (
+                <li key={item.label}>
+                  <button
+                    onClick={() => setCurrentFilter(item.filter)}
+                    className="footer-link"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Marcas</h4>
+            <ul className="footer-links">
+              {['Bosch', 'Makita', 'DEWALT', 'Stanley', 'Husqvarna', '3M', 'Black+Decker', 'Werner'].map((item) => (
+                <li key={item}>
+                  <button
+                    onClick={() => handleSearchSuggestion(item)}
+                    className="footer-link"
+                  >
+                    {item}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Garantía</h4>
+            <p className="footer-description mb-4">
+              Todas nuestras herramientas incluyen garantía de 2 años y soporte técnico especializado.
             </p>
-            <div className="flex gap-8 text-xs font-bold text-gray-600 uppercase tracking-widest">
-              <a href="#" className="hover:text-white transition-colors">Garantías</a>
-              <a href="#" className="hover:text-white transition-colors">Soporte Técnico</a>
-              <a href="#" className="hover:text-white transition-colors">Manuales</a>
-              <a href="#" className="hover:text-white transition-colors">Contacto</a>
+            <div className="flex flex-col gap-3">
+              <input
+                type="email"
+                placeholder="Email para ofertas"
+                className="px-5 py-3 text-sm rounded-sm focus:shadow-[0_0_0_1px_#ec1313] focus:outline-none"
+                style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-primary)' }}
+              />
+              <button className="bg-[#ec1313] text-white px-5 py-3 font-black text-xs uppercase tracking-widest rounded-sm hover:bg-[#dc2626] transition-colors">
+                SUSCRIBIR
+              </button>
             </div>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <p className="copyright">© 2024 Tecommers Herramientas. Todos los derechos reservados.</p>
+          <div className="footer-bottom-links">
+            <Link to="/warranty" className="footer-bottom-link">Garantías</Link>
+            <Link to="/support" className="footer-bottom-link">Soporte Técnico</Link>
+            <Link to="/manuals" className="footer-bottom-link">Manuales</Link>
+            <Link to="/contact" className="footer-bottom-link">Contacto</Link>
           </div>
         </div>
       </footer>
 
       {showNotification && (
-        <div className="fixed bottom-5 right-5 bg-white border-l-4 border-[#cf2e2e] p-4 rounded-lg shadow-xl z-50 flex items-center gap-3 max-w-sm animate-slide-in">
+        <div className="fixed bottom-5 right-5 p-4 rounded-lg shadow-xl z-50 flex items-center gap-3 max-w-sm animate-slide-in"
+             style={{ backgroundColor: 'var(--card-bg)', borderLeft: '4px solid #cf2e2e' }}>
           <span className="material-symbols-outlined text-green-600">check_circle</span>
-          <span className="text-gray-800">{notificationMessage}</span>
+          <span style={{ color: 'var(--text-primary)' }}>{notificationMessage}</span>
         </div>
       )}
 
       {showProfessionalInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowProfessionalInfo(false)}>
-          <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="p-8 rounded-2xl max-w-md text-center shadow-2xl" 
+               style={{ backgroundColor: 'var(--modal-bg)' }} 
+               onClick={e => e.stopPropagation()}>
             <span className="material-symbols-outlined text-5xl text-[#cf2e2e] mb-5">engineering</span>
-            <h4 className="text-2xl text-gray-800 mb-4">Herramientas Profesionales</h4>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <h4 className="text-2xl mb-4" style={{ color: 'var(--text-primary)' }}>Herramientas Profesionales</h4>
+            <p className="mb-6 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Equipamiento de alta gama diseñado para uso intensivo, con mayor durabilidad, potencia y características avanzadas.
             </p>
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">auto_awesome</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Uso Intensivo</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Uso Intensivo</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">verified</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Garantía Extendida</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Garantía Extendida</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">rocket_launch</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Máximo Rendimiento</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Máximo Rendimiento</span>
               </div>
             </div>
             <button
@@ -635,24 +779,26 @@ const Herramientas: React.FC = () => {
 
       {showNewToolsInfo && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-5 animate-fade-in" onClick={() => setShowNewToolsInfo(false)}>
-          <div className="bg-white p-8 rounded-2xl max-w-md text-center shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="p-8 rounded-2xl max-w-md text-center shadow-2xl" 
+               style={{ backgroundColor: 'var(--modal-bg)' }} 
+               onClick={e => e.stopPropagation()}>
             <span className="material-symbols-outlined text-5xl text-[#cf2e2e] mb-5">new_releases</span>
-            <h4 className="text-2xl text-gray-800 mb-4">Nuevas Herramientas 2024</h4>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <h4 className="text-2xl mb-4" style={{ color: 'var(--text-primary)' }}>Nuevas Herramientas 2024</h4>
+            <p className="mb-6 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Últimos modelos con tecnología avanzada, mejoras de diseño y características innovadoras para mayor productividad.
             </p>
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">electric_bolt</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Tecnología Brushless</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Tecnología Brushless</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">battery_charging_full</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Autonomía Mejorada</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Autonomía Mejorada</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 bg-[#fee] rounded-lg">
+              <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(236, 19, 19, 0.1)' }}>
                 <span className="material-symbols-outlined text-2xl text-[#cf2e2e]">memory</span>
-                <span className="text-xs text-[#b91c1c] font-medium">Electrónica Avanzada</span>
+                <span className="text-xs font-medium" style={{ color: '#b91c1c' }}>Electrónica Avanzada</span>
               </div>
             </div>
             <button

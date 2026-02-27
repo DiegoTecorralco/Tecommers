@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 import TecommersRegister from '../utils/register';
 
 const RegisterPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const formRef = useRef<HTMLFormElement>(null);
   const [showModal, setShowModal] = useState(false);
   const [successEmail, setSuccessEmail] = useState('');
@@ -86,52 +88,41 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* ================= NAVBAR PRINCIPAL ================= */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#ec1313" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#ec1313" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Home
-            </Link>
-            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button active" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
-            <div className="hamburger-menu lg:hidden">
+            <div className="hamburger-menu">
               <button 
                 className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
                 onClick={toggleMenu}
@@ -251,7 +242,7 @@ const RegisterPage: React.FC = () => {
           <h1 className="text-[#ec1313] text-5xl md:text-7xl font-black uppercase tracking-tight mb-2">
             Registro
           </h1>
-          <p className="text-gray-500 text-lg">
+          <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
             Únete a nuestra comunidad y descubre las mejores ofertas
           </p>
         </div>
@@ -260,16 +251,17 @@ const RegisterPage: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <form id="registerForm" ref={formRef} className="space-y-8" noValidate>
             {/* Sección 1: Información personal */}
-            <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <div className="p-6 md:p-8 rounded-xl shadow-sm border"
+                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-2xl font-bold mb-2 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <span className="material-symbols-outlined text-[#ec1313]">person</span>
                 Información personal
               </h2>
-              <p className="text-sm text-gray-500 mb-6">Todo campo marcado con * es obligatorio</p>
+              <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>Todo campo marcado con * es obligatorio</p>
               
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nombre" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Nombre completo <span className="text-[#ec1313]">*</span>
                   </label>
                   <input
@@ -281,14 +273,19 @@ const RegisterPage: React.FC = () => {
                     maxLength={50}
                     placeholder="Ej: María González López"
                     autoComplete="name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    style={{ 
+                      backgroundColor: 'var(--input-bg)', 
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
                   />
                   <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-nombre"></div>
-                  <small className="text-xs text-gray-500">Mínimo 3 caracteres</small>
+                  <small className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Mínimo 3 caracteres</small>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Correo electrónico <span className="text-[#ec1313]">*</span>
                   </label>
                   <input
@@ -298,15 +295,20 @@ const RegisterPage: React.FC = () => {
                     required
                     placeholder="ejemplo@correo.com"
                     autoComplete="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    style={{ 
+                      backgroundColor: 'var(--input-bg)', 
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
                   />
                   <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-email"></div>
-                  <small className="text-xs text-gray-500">Usaremos este correo para notificaciones</small>
+                  <small className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Usaremos este correo para notificaciones</small>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="telefono" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                       Teléfono <span className="text-[#ec1313]">*</span>
                     </label>
                     <input
@@ -317,14 +319,19 @@ const RegisterPage: React.FC = () => {
                       pattern="[0-9]{10}"
                       placeholder="1234567890"
                       autoComplete="tel"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                      style={{ 
+                        backgroundColor: 'var(--input-bg)', 
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)'
+                      }}
                     />
                     <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-telefono"></div>
-                    <small className="text-xs text-gray-500">10 dígitos sin espacios</small>
+                    <small className="text-xs" style={{ color: 'var(--text-tertiary)' }}>10 dígitos sin espacios</small>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="fechaNacimiento" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                       Fecha de nacimiento <span className="text-[#ec1313]">*</span>
                     </label>
                     <input
@@ -332,25 +339,31 @@ const RegisterPage: React.FC = () => {
                       id="fechaNacimiento"
                       name="fechaNacimiento"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                      style={{ 
+                        backgroundColor: 'var(--input-bg)', 
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)'
+                      }}
                     />
                     <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-fechaNacimiento"></div>
-                    <small className="text-xs text-gray-500">Debes ser mayor de 18 años</small>
+                    <small className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Debes ser mayor de 18 años</small>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Sección 2: Credenciales de acceso */}
-            <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <div className="p-6 md:p-8 rounded-xl shadow-sm border"
+                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <span className="material-symbols-outlined text-[#ec1313]">lock</span>
                 Credenciales de acceso
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Contraseña <span className="text-[#ec1313]">*</span>
                   </label>
                   <div className="relative">
@@ -362,11 +375,17 @@ const RegisterPage: React.FC = () => {
                       minLength={8}
                       placeholder="Mínimo 8 caracteres"
                       autoComplete="new-password"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all pr-12"
+                      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all pr-12"
+                      style={{ 
+                        backgroundColor: 'var(--input-bg)', 
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)'
+                      }}
                     />
                     <button
                       type="button"
-                      className="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#ec1313] transition-colors"
+                      className="toggle-password absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                      style={{ color: 'var(--text-tertiary)' }}
                       data-target="password"
                     >
                       <span className="material-symbols-outlined">visibility</span>
@@ -374,15 +393,15 @@ const RegisterPage: React.FC = () => {
                   </div>
                   <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-password"></div>
                   <div className="mt-3">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="strength-bar h-full w-0 transition-all duration-300"></div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+                      <div className="strength-bar h-full w-0 transition-all duration-300" style={{ backgroundColor: '#ef4444' }}></div>
                     </div>
-                    <p className="strength-text text-xs mt-1 text-gray-500">Seguridad de la contraseña</p>
+                    <p className="strength-text text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>Seguridad de la contraseña</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Confirmar contraseña <span className="text-[#ec1313]">*</span>
                   </label>
                   <div className="relative">
@@ -394,11 +413,17 @@ const RegisterPage: React.FC = () => {
                       minLength={8}
                       placeholder="Repite tu contraseña"
                       autoComplete="new-password"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all pr-12"
+                      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all pr-12"
+                      style={{ 
+                        backgroundColor: 'var(--input-bg)', 
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)'
+                      }}
                     />
                     <button
                       type="button"
-                      className="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#ec1313] transition-colors"
+                      className="toggle-password absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                      style={{ color: 'var(--text-tertiary)' }}
                       data-target="confirmPassword"
                     >
                       <span className="material-symbols-outlined">visibility</span>
@@ -408,28 +433,28 @@ const RegisterPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-700 mb-3">
+              <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <p className="text-sm font-medium mb-3" style={{ color: 'var(--text-primary)' }}>
                   <strong>Tu contraseña debe incluir:</strong>
                 </p>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                  <li className="requirement-item flex items-center gap-2 text-gray-600" data-rule="length">
+                  <li className="requirement-item flex items-center gap-2" data-rule="length" style={{ color: 'var(--text-secondary)' }}>
                     <span className="material-symbols-outlined text-red-500 text-base">cancel</span>
                     Al menos 8 caracteres
                   </li>
-                  <li className="requirement-item flex items-center gap-2 text-gray-600" data-rule="uppercase">
+                  <li className="requirement-item flex items-center gap-2" data-rule="uppercase" style={{ color: 'var(--text-secondary)' }}>
                     <span className="material-symbols-outlined text-red-500 text-base">cancel</span>
                     Una letra mayúscula
                   </li>
-                  <li className="requirement-item flex items-center gap-2 text-gray-600" data-rule="lowercase">
+                  <li className="requirement-item flex items-center gap-2" data-rule="lowercase" style={{ color: 'var(--text-secondary)' }}>
                     <span className="material-symbols-outlined text-red-500 text-base">cancel</span>
                     Una letra minúscula
                   </li>
-                  <li className="requirement-item flex items-center gap-2 text-gray-600" data-rule="number">
+                  <li className="requirement-item flex items-center gap-2" data-rule="number" style={{ color: 'var(--text-secondary)' }}>
                     <span className="material-symbols-outlined text-red-500 text-base">cancel</span>
                     Un número
                   </li>
-                  <li className="requirement-item flex items-center gap-2 text-gray-600" data-rule="special">
+                  <li className="requirement-item flex items-center gap-2" data-rule="special" style={{ color: 'var(--text-secondary)' }}>
                     <span className="material-symbols-outlined text-red-500 text-base">cancel</span>
                     Un carácter especial (@$!%*?&)
                   </li>
@@ -438,15 +463,16 @@ const RegisterPage: React.FC = () => {
             </div>
 
             {/* Sección 3: Verificación humana */}
-            <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <div className="p-6 md:p-8 rounded-xl shadow-sm border"
+                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <span className="material-symbols-outlined text-[#ec1313]">verified</span>
                 Verificación de seguridad
               </h2>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="captcha" className="captcha-label block text-sm font-medium text-gray-700">
+                  <label htmlFor="captcha" className="captcha-label block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                     Para confirmar que no eres un robot: ¿Cuánto es 7 + 5? *
                   </label>
                   <input
@@ -455,10 +481,15 @@ const RegisterPage: React.FC = () => {
                     name="captcha"
                     required
                     placeholder="Escribe la respuesta"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec1313] focus:border-transparent transition-all"
+                    style={{ 
+                      backgroundColor: 'var(--input-bg)', 
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
                   />
                   <div className="error-message text-sm text-red-600 flex items-center gap-1 hidden" id="error-captcha"></div>
-                  <small className="text-xs text-gray-500">Pregunta simple para prevenir registros automáticos</small>
+                  <small className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Pregunta simple para prevenir registros automáticos</small>
                 </div>
 
                 <div className="space-y-3">
@@ -468,9 +499,10 @@ const RegisterPage: React.FC = () => {
                       id="terminos"
                       name="terminos"
                       required
-                      className="mt-1 w-4 h-4 text-[#ec1313] border-gray-300 rounded focus:ring-[#ec1313]"
+                      className="mt-1 w-4 h-4 text-[#ec1313] rounded focus:ring-[#ec1313]"
+                      style={{ accentColor: '#ec1313' }}
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       Acepto los <Link to="/terms" className="text-[#ec1313] hover:underline">Términos y Condiciones</Link> y la <Link to="/privacy" className="text-[#ec1313] hover:underline">Política de Privacidad</Link> *
                     </span>
                   </label>
@@ -481,9 +513,10 @@ const RegisterPage: React.FC = () => {
                       type="checkbox"
                       id="newsletter"
                       name="newsletter"
-                      className="mt-1 w-4 h-4 text-[#ec1313] border-gray-300 rounded focus:ring-[#ec1313]"
+                      className="mt-1 w-4 h-4 text-[#ec1313] rounded focus:ring-[#ec1313]"
+                      style={{ accentColor: '#ec1313' }}
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       Sí, quiero recibir ofertas exclusivas y novedades por correo electrónico
                     </span>
                   </label>
@@ -505,7 +538,12 @@ const RegisterPage: React.FC = () => {
               <button
                 type="button"
                 id="resetBtn"
-                className="px-8 py-3 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 min-w-[200px] justify-center"
+                className="px-8 py-3 font-bold rounded-lg transition-colors flex items-center gap-2 min-w-[200px] justify-center"
+                style={{ 
+                  backgroundColor: 'var(--bg-tertiary)', 
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--border-color)'
+                }}
               >
                 <span className="material-symbols-outlined">restart_alt</span>
                 Limpiar formulario
@@ -513,7 +551,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div className="text-center mt-6">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 ¿Ya tienes una cuenta? <Link to="/login" className="text-[#ec1313] font-medium hover:underline">Inicia sesión aquí</Link>
               </p>
             </div>
@@ -524,7 +562,8 @@ const RegisterPage: React.FC = () => {
         <div className="mt-12 flex justify-center">
           <Link
             to="/"
-            className="px-8 py-3 bg-white border-2 border-[#ec1313] text-[#ec1313] font-bold rounded-full hover:bg-[#ec1313] hover:text-white transition-all"
+            className="px-8 py-3 border-2 border-[#ec1313] text-[#ec1313] font-bold rounded-full transition-all hover:bg-[#ec1313] hover:text-white"
+            style={{ backgroundColor: 'transparent' }}
           >
             Volver al inicio
           </Link>
@@ -532,55 +571,62 @@ const RegisterPage: React.FC = () => {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8 mt-12">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-6 text-[#ec1313]">
-              <div className="relative w-8 h-6">
-                <div className="absolute top-0 left-0 w-full h-[30%] bg-[#ec1313] transform -skew-x-[20deg]"></div>
-                <div className="absolute top-[35%] left-[35%] w-[45%] h-[20%] bg-black transform -skew-x-[20deg]"></div>
-                <div className="absolute bottom-0 left-[25%] w-[40%] h-[25%] bg-[#ec1313] transform -skew-x-[20deg]"></div>
-                <div className="absolute top-0 left-[15%] w-[15%] h-full bg-[#ec1313] transform -skew-x-[20deg]"></div>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
+                </div>
               </div>
-              <span className="text-lg font-black tracking-tight text-black ml-1">TECOMMERS</span>
+              <span className="footer-logo-text">TECOMMERS</span>
             </div>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="footer-description">
               Tu tienda online de confianza para todas tus necesidades.
             </p>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Ayuda</h4>
-            <ul className="list-none flex flex-col gap-3 text-sm text-gray-500">
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Centro de ayuda</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Contacto</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Guía de compra</a></li>
+          <div className="footer-section">
+            <h4 className="footer-heading">Ayuda</h4>
+            <ul className="footer-links">
+              <li><Link to="/help" className="footer-link">Centro de ayuda</Link></li>
+              <li><Link to="/contact" className="footer-link">Contacto</Link></li>
+              <li><Link to="/guide" className="footer-link">Guía de compra</Link></li>
             </ul>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Legal</h4>
-            <ul className="list-none flex flex-col gap-3 text-sm text-gray-500">
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Términos y condiciones</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Política de privacidad</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Aviso legal</a></li>
+          <div className="footer-section">
+            <h4 className="footer-heading">Legal</h4>
+            <ul className="footer-links">
+              <li><Link to="/terms" className="footer-link">Términos y condiciones</Link></li>
+              <li><Link to="/privacy" className="footer-link">Política de privacidad</Link></li>
+              <li><Link to="/legal" className="footer-link">Aviso legal</Link></li>
             </ul>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Newsletter</h4>
-            <div className="flex rounded-lg overflow-hidden border border-gray-300">
-              <input type="email" placeholder="Email" className="flex-1 px-4 py-2 text-sm outline-none border-none" />
+          <div className="footer-section">
+            <h4 className="footer-heading">Newsletter</h4>
+            <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'var(--border-color)' }}>
+              <input 
+                type="email" 
+                placeholder="Email" 
+                className="flex-1 px-4 py-2 text-sm outline-none border-none"
+                style={{ 
+                  backgroundColor: 'var(--input-bg)', 
+                  color: 'var(--text-primary)'
+                }}
+              />
               <button className="bg-[#ec1313] text-white px-4 py-2 text-xs font-bold border-none cursor-pointer transition-colors hover:bg-[#b91c1c]">
                 UNIRSE
               </button>
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-gray-200">
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
-            © 2024 Tecommers. Todos los derechos reservados.
-          </p>
-          <div className="flex gap-6 text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
-            <a href="#" className="text-gray-400 no-underline transition-colors hover:text-[#ec1313]">Privacidad</a>
-            <a href="#" className="text-gray-400 no-underline transition-colors hover:text-[#ec1313]">Términos</a>
+        <div className="footer-bottom">
+          <p className="copyright">© 2024 Tecommers. Todos los derechos reservados.</p>
+          <div className="footer-bottom-links">
+            <Link to="/privacy" className="footer-bottom-link">Privacidad</Link>
+            <Link to="/terms" className="footer-bottom-link">Términos</Link>
           </div>
         </div>
       </footer>
@@ -588,16 +634,17 @@ const RegisterPage: React.FC = () => {
       {/* Modal de éxito */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-8 shadow-2xl animate-fade-in">
+          <div className="rounded-xl max-w-md w-full p-8 shadow-2xl animate-fade-in"
+               style={{ backgroundColor: 'var(--modal-bg)' }}>
             <div className="text-center">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="material-symbols-outlined text-green-600 text-5xl">check_circle</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">¡Cuenta creada exitosamente!</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>¡Cuenta creada exitosamente!</h3>
+              <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>
                 Te hemos enviado un correo de confirmación a <strong className="text-[#ec1313]">{successEmail}</strong>
               </p>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm mb-6" style={{ color: 'var(--text-tertiary)' }}>
                 Redirigiendo a tu cuenta en <span className="font-bold text-[#ec1313]">{countdown}</span> segundos...
               </p>
               <button

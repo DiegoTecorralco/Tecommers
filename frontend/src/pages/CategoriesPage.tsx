@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 
 const CategoriesPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -56,51 +58,40 @@ const CategoriesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#cf2e2e" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Home
-            </Link>
-            <Link to="/categories" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link active">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
-            <div className="hamburger-menu lg:hidden">
+            <div className="hamburger-menu">
               <button 
                 className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
                 onClick={toggleMenu}
@@ -213,7 +204,7 @@ const CategoriesPage: React.FC = () => {
         </div>
       </div>
 
-      <main className="flex-1 flex flex-col items-center w-full">
+      <main className="flex-1 flex flex-col items-center w-full py-12">
         <div className="w-full max-w-3xl px-6 mt-12">
           <div className="relative w-full">
             <div className="absolute top-1/2 left-5 -translate-y-1/2 text-gray-400 pointer-events-none">
@@ -224,7 +215,12 @@ const CategoriesPage: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar productos, marcas y más..."
-              className="w-full h-14 pl-14 pr-6 bg-white border-2 border-slate-100 rounded-full text-lg font-normal transition-all shadow-md focus:outline-none focus:border-[#ec1313]"
+              className="w-full h-14 pl-14 pr-6 rounded-full text-lg font-normal transition-all shadow-md focus:outline-none focus:border-[#ec1313]"
+              style={{ 
+                backgroundColor: 'var(--input-bg)', 
+                border: '2px solid var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
             />
           </div>
         </div>
@@ -253,7 +249,8 @@ const CategoriesPage: React.FC = () => {
                     ></div>
                   </div>
                 </div>
-                <p className="text-[#1a1a1a] text-3xl font-black group-hover:text-[#ec1313] transition-colors tracking-tight uppercase text-center">
+                <p className="text-3xl font-black group-hover:text-[#ec1313] transition-colors tracking-tight uppercase text-center"
+                   style={{ color: 'var(--text-primary)' }}>
                   {category.name}
                 </p>
               </Link>
@@ -262,25 +259,46 @@ const CategoriesPage: React.FC = () => {
         </div>
       </main>
 
-      <footer className="bg-white border-t border-slate-100 py-16">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
-          <div className="flex flex-wrap justify-center gap-12 mb-12">
-            <Link to="/privacy" className="text-slate-500 text-sm font-semibold uppercase tracking-widest hover:text-[#ec1313] transition-colors no-underline">
-              Privacidad
-            </Link>
-            <Link to="/terms" className="text-slate-500 text-sm font-semibold uppercase tracking-widest hover:text-[#ec1313] transition-colors no-underline">
-              Términos y Condiciones
-            </Link>
-            <Link to="/help" className="text-slate-500 text-sm font-semibold uppercase tracking-widest hover:text-[#ec1313] transition-colors no-underline">
-              Centro de Ayuda
-            </Link>
-            <Link to="/contact" className="text-slate-500 text-sm font-semibold uppercase tracking-widest hover:text-[#ec1313] transition-colors no-underline">
-              Contacto
-            </Link>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
+                </div>
+              </div>
+              <span className="footer-logo-text">TECOMMERS</span>
+            </div>
+            <p className="footer-description">
+              Tu aliado estratégico en compras online. Calidad, rapidez y confianza en cada uno de
+              tus pedidos.
+            </p>
           </div>
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-widest">
-            © 2024 Tecommers — Todos los derechos reservados.
-          </p>
+          
+          <div className="footer-section">
+            <h4 className="footer-heading">Empresa</h4>
+            <ul className="footer-links">
+              <li><Link to="/about" className="footer-link">Sobre Nosotros</Link></li>
+              <li><Link to="/services" className="footer-link">Nuestros Servicios</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Categorias</h4>
+            <ul className="footer-links">
+              <li><Link to="/categories/tecnologia" className="footer-link">Tecnología</Link></li>
+              <li><Link to="/categories/electrodomesticos" className="footer-link">Electrodomésticos</Link></li>
+              <li><Link to="/categories/muebles-hogar" className="footer-link">Muebles y Hogar</Link></li>
+              <li><Link to="/categories/herramientas" className="footer-link">Herramientas</Link></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="footer-bottom">
+          <p className="copyright">© 2026 Tecommers. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

@@ -1,10 +1,11 @@
 /* ===== VARIABLES ===== */
+/* Actualiza las variables en HomePage.css */
 :root {
   --brand-red: #ec1313;
   --brand-black: #1a1a1a;
   --navbar-height: 80px;
   
-  /* Colores */
+  /* Reemplaza los colores fijos con variables */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --text-primary: #1a1a1a;
@@ -15,6 +16,204 @@
   --hover-bg: #f1f5f9;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --hero-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* Modo oscuro en HomePage.css */
+.dark {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --border-color: #404040;
+  --card-bg: #2d2d2d;
+  --input-bg: #333333;
+  --hover-bg: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --hero-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* Header en modo oscuro */
+.dark .header {
+  background-color: var(--bg-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark .logo-text {
+  color: var(--text-primary);
+}
+
+.dark .nav-link {
+  color: var(--text-secondary);
+}
+
+.dark .nav-link.active {
+  color: var(--brand-red);
+}
+
+/* Iconos en modo oscuro */
+.dark .icon-button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark .icon-button:hover {
+  background-color: var(--hover-bg);
+  color: var(--brand-red);
+}
+
+/* Side menu en modo oscuro */
+.dark .side-menu {
+  background-color: var(--bg-primary);
+}
+
+.dark .side-menu-header {
+  border-bottom-color: var(--border-color);
+}
+
+.dark .side-menu-avatar {
+  background-color: var(--bg-secondary);
+}
+
+.dark .side-menu-user-info h3 {
+  color: var(--text-primary);
+}
+
+.dark .side-menu-user-info p {
+  color: var(--text-secondary);
+}
+
+.dark .side-menu-close {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark .side-menu-search {
+  border-bottom-color: var(--border-color);
+}
+
+.dark .side-menu-search-input {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark .side-menu-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark .side-menu-link {
+  color: var(--text-primary);
+}
+
+.dark .side-menu-link:hover {
+  background-color: var(--hover-bg);
+}
+
+.dark .side-menu-section-title {
+  color: var(--text-secondary);
+}
+
+.dark .side-menu-category-item {
+  background-color: var(--bg-secondary);
+}
+
+.dark .category-name {
+  color: var(--text-primary);
+}
+
+.dark .side-menu-footer {
+  border-top-color: var(--border-color);
+}
+
+.dark .side-menu-footer-link {
+  color: var(--text-secondary);
+}
+
+/* Search box en modo oscuro */
+.dark .search-box {
+  background-color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.dark .search-input {
+  color: var(--text-primary);
+}
+
+.dark .search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Categorías en modo oscuro */
+.dark .category-image-container {
+  background-color: var(--bg-secondary);
+}
+
+.dark .category-title {
+  color: var(--text-primary);
+}
+
+.dark .category-description {
+  color: var(--text-secondary);
+}
+
+/* Formulario de reseñas en modo oscuro */
+.dark .bg-white {
+  background-color: var(--card-bg) !important;
+}
+
+.dark .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-700 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+.dark .border-gray-200 {
+  border-color: var(--border-color) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: var(--input-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Modales en modo oscuro */
+.dark .fixed .bg-white {
+  background-color: var(--modal-bg) !important;
+}
+
+.dark .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+/* Footer en modo oscuro */
+.dark .footer {
+  background-color: var(--footer-bg);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -635,3 +834,287 @@ body {
   text-decoration: none;
 }
 .footer-bottom-link:hover { color: white; }
+
+/* ===== ESTILOS PARA VALIDACIONES DE FORMULARIO ===== */
+
+/* Estilos para campos válidos e inválidos */
+input.valid,
+select.valid,
+textarea.valid {
+  border-color: #10b981 !important;
+  background-color: #f0fdf4;
+}
+
+input.invalid,
+select.invalid,
+textarea.invalid {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  display: none;
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fef2f2;
+  border-radius: 0.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-left: 3px solid #ef4444;
+}
+
+.error-message.show,
+.error-message.flex {
+  display: flex;
+}
+
+/* Animación para mensajes de error */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message.show,
+.error-message.flex {
+  animation: slideIn 0.3s ease;
+}
+
+/* ===== MODAL DE ÉXITO ESTILIZADO ===== */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.success-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.success-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(236, 19, 19, 0.1);
+}
+
+.success-modal-overlay.open .success-modal {
+  transform: scale(1);
+}
+
+.success-modal-icon {
+  margin-bottom: 1rem;
+}
+
+.success-modal-icon span {
+  font-size: 4rem;
+  color: #10b981;
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.success-modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.success-modal-message {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.success-modal-button {
+  background: #ec1313;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.success-modal-button:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(236, 19, 19, 0.3);
+}
+
+/* ===== ESTILOS PARA BOTÓN DE RESET ===== */
+#resetReviewBtn {
+  background: #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+#resetReviewBtn:hover {
+  background: #d1d5db;
+  transform: rotate(90deg);
+}
+
+#resetReviewBtn span {
+  transition: transform 0.3s ease;
+}
+
+#resetReviewBtn:hover span {
+  transform: rotate(180deg);
+}
+
+/* ===== ESTILOS PARA CONTADOR DE CARACTERES ===== */
+#character-count {
+  transition: color 0.3s ease;
+}
+
+#character-count.warning {
+  color: #f59e0b;
+}
+
+#character-count.danger {
+  color: #ef4444;
+}
+
+/* ===== ESTILOS PARA BOTÓN DE ENVÍO DESHABILITADO ===== */
+#submitReviewBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #9ca3af;
+}
+
+#submitReviewBtn:disabled:hover {
+  background: #9ca3af;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== ANIMACIÓN PARA SPIN EN BOTÓN DE ENVÍO ===== */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ===== ESTILOS PARA TARJETAS DE RESEÑAS ===== */
+.review-card {
+  transition: all 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -15px rgba(236, 19, 19, 0.2);
+}
+
+/* Animación para eliminación */
+.review-card.deleting {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* ===== ESTILOS PARA ESTRELLAS DE CALIFICACIÓN ===== */
+.rating-star {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rating-star:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 10px rgba(236, 19, 19, 0.3);
+}
+
+.rating-star.text-yellow-400 {
+  text-shadow: 0 0 5px rgba(250, 204, 21, 0.5);
+}
+
+/* ===== ANIMACIONES PARA MODAL ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para el modal de éxito (igual que registro) */
+.fixed.inset-0.bg-black.bg-opacity-50 {
+  backdrop-filter: blur(5px);
+}
+
+.fixed.inset-0 .bg-white {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(236, 19, 19, 0.1);
+}
+
+.fixed.inset-0 .w-20.h-20 {
+  transition: all 0.3s ease;
+}
+
+.fixed.inset-0 .w-20.h-20:hover {
+  transform: scale(1.1);
+}
+
+.fixed.inset-0 .material-symbols-outlined.text-green-600 {
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

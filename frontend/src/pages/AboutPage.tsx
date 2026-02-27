@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 
 const AboutPage: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,52 +30,41 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* ================= NAVBAR PRINCIPAL ================= */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#cf2e2e" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Home
-            </Link>
-            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors text-sm py-2">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link">Categorías</Link>
+            <Link to="/offers" className="nav-link">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link active">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
-            <div className="hamburger-menu lg:hidden">
+            <div className="hamburger-menu">
               <button 
                 className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
                 onClick={toggleMenu}
@@ -210,14 +201,14 @@ const AboutPage: React.FC = () => {
 
           {/* Nuestra historia */}
           <div className="mb-20">
-            <h2 className="text-[#1b0d0d] text-4xl font-bold leading-tight tracking-tight pb-6">
+            <h2 className="text-4xl font-bold leading-tight tracking-tight pb-6" style={{ color: 'var(--text-primary)' }}>
               Nuestra historia
             </h2>
             <div className="flex flex-col gap-6">
-              <p className="text-lg leading-relaxed text-[#1b0d0d]">
+              <p className="text-lg leading-relaxed" style={{ color: 'var(--text-primary)' }}>
                 Tecommers nació con la visión de revolucionar el comercio electrónico, ofreciendo productos de alta calidad con una identidad audaz. Desde nuestros inicios, nos hemos esforzado por conectar a los clientes con lo mejor del mercado, manteniendo siempre un compromiso inquebrantable con la excelencia y la innovación constante en cada paso de nuestro crecimiento.
               </p>
-              <p className="text-lg leading-relaxed text-[#1b0d0d]">
+              <p className="text-lg leading-relaxed" style={{ color: 'var(--text-primary)' }}>
                 Lo que comenzó como un pequeño proyecto apasionado por el diseño y la funcionalidad se ha convertido en un referente regional. Nuestra filosofía se basa en la simplicidad, la eficiencia y, sobre todo, en poner a las personas en el centro de nuestra tecnología.
               </p>
             </div>
@@ -226,34 +217,37 @@ const AboutPage: React.FC = () => {
           {/* Grid de valores */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-24">
             {/* Misión */}
-            <div className="flex flex-col gap-4 rounded-xl bg-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col gap-4 rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow"
+                 style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div className="flex items-center justify-center mb-2 text-[#ec1313]">
                 <span className="material-symbols-outlined text-[28px]">target</span>
               </div>
-              <h3 className="text-xl font-bold text-[#1b0d0d] text-center">Misión</h3>
-              <p className="text-gray-500 text-base leading-relaxed text-center">
+              <h3 className="text-xl font-bold text-center" style={{ color: 'var(--text-primary)' }}>Misión</h3>
+              <p className="text-base leading-relaxed text-center" style={{ color: 'var(--text-secondary)' }}>
                 Impulsar el éxito de nuestros clientes a través de una plataforma de comercio electrónico accesible, eficiente y de alta calidad técnica.
               </p>
             </div>
 
             {/* Visión */}
-            <div className="flex flex-col gap-4 rounded-xl bg-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col gap-4 rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow"
+                 style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div className="flex items-center justify-center mb-2 text-[#ec1313]">
                 <span className="material-symbols-outlined text-[28px]">visibility</span>
               </div>
-              <h3 className="text-xl font-bold text-[#1b0d0d] text-center">Visión</h3>
-              <p className="text-gray-500 text-base leading-relaxed text-center">
+              <h3 className="text-xl font-bold text-center" style={{ color: 'var(--text-primary)' }}>Visión</h3>
+              <p className="text-base leading-relaxed text-center" style={{ color: 'var(--text-secondary)' }}>
                 Convertirnos en el referente líder de e-commerce a nivel regional para el año 2030, destacando por nuestra agilidad y confianza.
               </p>
             </div>
 
             {/* Valores */}
-            <div className="flex flex-col gap-4 rounded-xl bg-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col gap-4 rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow"
+                 style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div className="flex items-center justify-center mb-2 text-[#ec1313]">
                 <span className="material-symbols-outlined text-[28px]">diamond</span>
               </div>
-              <h3 className="text-xl font-bold text-[#1b0d0d] text-center">Valores</h3>
-              <ul className="text-gray-500 text-base leading-relaxed list-none p-0 text-center">
+              <h3 className="text-xl font-bold text-center" style={{ color: 'var(--text-primary)' }}>Valores</h3>
+              <ul className="text-base leading-relaxed list-none p-0 text-center" style={{ color: 'var(--text-secondary)' }}>
                 <li className="mb-1">• Innovación</li>
                 <li className="mb-1">• Integridad</li>
                 <li className="mb-1">• Enfoque en el cliente</li>
@@ -263,47 +257,130 @@ const AboutPage: React.FC = () => {
           </div>
 
           {/* Footer de la página */}
-          <footer className="pt-16 pb-12 border-t border-[#e7cfcf]">
+          <footer className="pt-16 pb-12 border-t" style={{ borderColor: 'var(--border-color)' }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
               {/* Información de contacto */}
               <div>
-                <h3 className="text-xl font-bold text-[#1b0d0d] mb-6">Información de Contacto</h3>
+                <h3 className="text-xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Información de Contacto</h3>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-[#ec1313]">mail</span>
-                    <span className="text-lg text-[#1b0d0d]">contacto@tecommers.com</span>
+                    <span className="text-lg" style={{ color: 'var(--text-primary)' }}>contacto@tecommers.com</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-[#ec1313]">call</span>
-                    <span className="text-lg text-[#1b0d0d]">+54 (11) 4567-8900</span>
+                    <span className="text-lg" style={{ color: 'var(--text-primary)' }}>+54 (11) 4567-8900</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-[#ec1313]">location_on</span>
-                    <span className="text-lg text-[#1b0d0d]">Huauchinango, Puebla</span>
+                    <span className="text-lg" style={{ color: 'var(--text-primary)' }}>Huauchinango, Puebla</span>
                   </div>
                 </div>
               </div>
 
               {/* Redes sociales */}
               <div>
-                <h3 className="text-xl font-bold text-[#1b0d0d] mb-6">Síguenos</h3>
+                <h3 className="text-xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Síguenos</h3>
                 <div className="flex gap-4 mb-12">
-                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-[#e7cfcf] text-[#ec1313] hover:bg-[#ec1313] hover:text-white transition-all shadow-sm">
+                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-sm"
+                     style={{ 
+                       backgroundColor: 'var(--bg-primary)', 
+                       border: '1px solid var(--border-color)',
+                       color: '#ec1313'
+                     }}
+                     onMouseEnter={(e) => {
+                       e.currentTarget.style.backgroundColor = '#ec1313';
+                       e.currentTarget.style.color = 'white';
+                     }}
+                     onMouseLeave={(e) => {
+                       e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
+                       e.currentTarget.style.color = '#ec1313';
+                     }}>
                     <span className="material-symbols-outlined">social_leaderboard</span>
                   </a>
-                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-[#e7cfcf] text-[#ec1313] hover:bg-[#ec1313] hover:text-white transition-all shadow-sm">
+                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-sm"
+                     style={{ 
+                       backgroundColor: 'var(--bg-primary)', 
+                       border: '1px solid var(--border-color)',
+                       color: '#ec1313'
+                     }}
+                     onMouseEnter={(e) => {
+                       e.currentTarget.style.backgroundColor = '#ec1313';
+                       e.currentTarget.style.color = 'white';
+                     }}
+                     onMouseLeave={(e) => {
+                       e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
+                       e.currentTarget.style.color = '#ec1313';
+                     }}>
                     <span className="material-symbols-outlined">language</span>
                   </a>
-                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-[#e7cfcf] text-[#ec1313] hover:bg-[#ec1313] hover:text-white transition-all shadow-sm">
+                  <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-sm"
+                     style={{ 
+                       backgroundColor: 'var(--bg-primary)', 
+                       border: '1px solid var(--border-color)',
+                       color: '#ec1313'
+                     }}
+                     onMouseEnter={(e) => {
+                       e.currentTarget.style.backgroundColor = '#ec1313';
+                       e.currentTarget.style.color = 'white';
+                     }}
+                     onMouseLeave={(e) => {
+                       e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
+                       e.currentTarget.style.color = '#ec1313';
+                     }}>
                     <span className="material-symbols-outlined">share</span>
                   </a>
                 </div>
-                <p className="text-sm text-gray-400">© 2024 Tecommers. Todos los derechos reservados.</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>© 2024 Tecommers. Todos los derechos reservados.</p>
               </div>
             </div>
           </footer>
         </div>
       </main>
+
+      {/* Footer principal de la página */}
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
+                </div>
+              </div>
+              <span className="footer-logo-text">TECOMMERS</span>
+            </div>
+            <p className="footer-description">
+              Tu aliado estratégico en compras online. Calidad, rapidez y confianza en cada uno de
+              tus pedidos.
+            </p>
+          </div>
+          
+          <div className="footer-section">
+            <h4 className="footer-heading">Empresa</h4>
+            <ul className="footer-links">
+              <li><Link to="/about" className="footer-link">Sobre Nosotros</Link></li>
+              <li><Link to="/services" className="footer-link">Nuestros Servicios</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4 className="footer-heading">Categorias</h4>
+            <ul className="footer-links">
+              <li><Link to="/categories/tecnologia" className="footer-link">Tecnología</Link></li>
+              <li><Link to="/categories/electrodomesticos" className="footer-link">Electrodomésticos</Link></li>
+              <li><Link to="/categories/muebles-hogar" className="footer-link">Muebles y Hogar</Link></li>
+              <li><Link to="/categories/herramientas" className="footer-link">Herramientas</Link></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="footer-bottom">
+          <p className="copyright">© 2026 Tecommers. Todos los derechos reservados.</p>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 
 interface Product {
   id: number;
@@ -15,6 +16,8 @@ interface Product {
 
 const OffersPage: React.FC = () => {
   const { addToCart, cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedSort, setSelectedSort] = useState('relevance');
@@ -23,6 +26,20 @@ const OffersPage: React.FC = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = 'unset';
+  };
 
   useEffect(() => {
     const initialProducts: Product[] = [
@@ -188,21 +205,21 @@ const OffersPage: React.FC = () => {
   };
 
   const handleAddToCart = (product: Product) => {
-  const productToAdd = {
-    id: product.id,
-    nombre: product.name,
-    precio: parsePrice(product.price),
-    precioOriginal: parsePrice(product.oldPrice),
-    imagen: product.image,
-    marca: 'Oferta',
-    descuento: product.discount,
-    especificaciones: []
+    const productToAdd = {
+      id: product.id,
+      nombre: product.name,
+      precio: parsePrice(product.price),
+      precioOriginal: parsePrice(product.oldPrice),
+      imagen: product.image,
+      marca: 'Oferta',
+      descuento: product.discount,
+      especificaciones: []
+    };
+    addToCart(productToAdd, 'ofertas');
+    setNotificationMessage(`${product.name} agregado al carrito`);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
   };
-  addToCart(productToAdd, 'ofertas');
-  setNotificationMessage(`${product.name} agregado al carrito`);
-  setShowNotification(true);
-  setTimeout(() => setShowNotification(false), 3000);
-};
 
   const clearSearch = () => {
     setSearchTerm('');
@@ -221,74 +238,181 @@ const OffersPage: React.FC = () => {
     setSelectedSort(e.target.value);
   };
 
+  const categories = [
+    { id: 'electrodomesticos', name: 'Electrodomésticos', icon: 'devices' },
+    { id: 'muebles-hogar', name: 'Muebles y Hogar', icon: 'chair' },
+    { id: 'tecnologia', name: 'Tecnología', icon: 'computer' },
+    { id: 'herramientas', name: 'Herramientas', icon: 'build' }
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 h-20 flex items-center">
-        <div className="max-w-7xl w-full mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <svg className="h-10 w-auto" viewBox="0 0 160 120">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <header className="header">
+        <div className="header-container">
+          <Link to="/" className="logo-container">
+            <svg className="logo-svg" viewBox="0 0 160 120">
               <path d="M10 20H80L65 50H45L30 110H10L25 50H10V20Z" fill="#cf2e2e" />
               <path d="M50 55H78L75 73H47L50 55Z" fill="black" />
               <path d="M43 85H71L68 103H40L43 85Z" fill="#cf2e2e" />
             </svg>
-            <span className="text-2xl font-black uppercase tracking-tight text-[#1a1a1a] -ml-3">
-              TECOMMERS
-            </span>
+            <span className="logo-text">TECOMMERS</span>
           </Link>
 
-          <nav className="flex items-center gap-10">
-            <Link to="/" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
-              Home
-            </Link>
-            <Link to="/categories" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
-              Categorías
-            </Link>
-            <Link to="/offers" className="text-[#cf2e2e] font-bold hover:text-[#ec1313] transition-colors no-underline text-sm py-2 relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[3px] after:bg-[#ec1313]">
-              Ofertas
-            </Link>
-            <Link to="/services" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
-              Servicios
-            </Link>
-            <Link to="/about" className="text-slate-600 font-medium hover:text-[#ec1313] transition-colors no-underline text-sm py-2">
-              Nosotros
-            </Link>
+          <nav className="nav">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/categories" className="nav-link">Categorías</Link>
+            <Link to="/offers" className="nav-link active">Ofertas</Link>
+            <Link to="/services" className="nav-link">Servicios</Link>
+            <Link to="/about" className="nav-link">Nosotros</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ec1313] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+          <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
+            <Link to="/cart" className="icon-button" aria-label="Carrito de compras">
+              <span className="material-symbols-outlined">shopping_cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
-            <Link to="/register" className="p-2.5 rounded-full bg-slate-100 text-gray-700 hover:text-[#ec1313] hover:bg-slate-200 transition-all w-11 h-11 flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">person</span>
+            <Link to="/register" className="icon-button" aria-label="Perfil de usuario">
+              <span className="material-symbols-outlined">person</span>
             </Link>
+            <div className="hamburger-menu">
+              <button 
+                className={`hamburger-button ${isMenuOpen ? 'active' : ''}`} 
+                onClick={toggleMenu}
+                aria-label="Menú"
+              >
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
+
+      <div className={`side-menu-overlay ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}></div>
+      <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
+        <div className="side-menu-header">
+          <div className="side-menu-user">
+            <div className="side-menu-avatar">
+              <span className="material-symbols-outlined">account_circle</span>
+            </div>
+            <div className="side-menu-user-info">
+              <h3>Invitado</h3>
+              <p>Inicia sesión para más opciones</p>
+            </div>
+          </div>
+          <button className="side-menu-close" onClick={closeMenu}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="side-menu-search">
+          <div className="side-menu-search-box">
+            <span className="material-symbols-outlined">search</span>
+            <input 
+              type="text" 
+              className="side-menu-search-input" 
+              placeholder="Buscar productos..." 
+            />
+          </div>
+        </div>
+
+        <div className="side-menu-nav">
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Menú Principal</h4>
+            <ul className="side-menu-links">
+              <li>
+                <Link to="/" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">home</span>Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">category</span>Categorías
+                </Link>
+              </li>
+              <li>
+                <Link to="/offers" className="side-menu-link active" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">local_offer</span>Ofertas
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">build</span>Servicios
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="side-menu-link" onClick={closeMenu}>
+                  <span className="material-symbols-outlined">info</span>Nosotros
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="side-menu-section">
+            <h4 className="side-menu-section-title">Categorías Populares</h4>
+            <div className="side-menu-category-grid">
+              {categories.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  to={`/categories/${cat.id}`} 
+                  className="side-menu-category-item" 
+                  onClick={closeMenu}
+                >
+                  <div className="category-icon">
+                    <span className="material-symbols-outlined">{cat.icon}</span>
+                  </div>
+                  <span className="category-name">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="side-menu-footer">
+          <div className="side-menu-footer-links">
+            <Link to="/help" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">help</span>
+              Centro de Ayuda
+            </Link>
+            <Link to="/login" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">login</span>
+              Iniciar Sesión
+            </Link>
+            <Link to="/register" className="side-menu-footer-link" onClick={closeMenu}>
+              <span className="material-symbols-outlined">app_registration</span>
+              Registrarse
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-12 w-full">
         <div className="text-center mb-12">
           <h1 className="text-[#ec1313] text-5xl md:text-7xl font-black uppercase tracking-tight mb-2">
             Ofertas
           </h1>
-          <p className="text-gray-500 text-lg">
+          <p style={{ color: 'var(--text-secondary)' }} className="text-lg">
             Aprovecha descuentos exclusivos por tiempo limitado
           </p>
 
           <div className="max-w-4xl mx-auto mt-8 mb-6">
-            <div className="flex items-center bg-white border-2 border-slate-200 rounded-xl p-2 mb-4 transition-all focus-within:border-[#ec1313] focus-within:shadow-[0_0_0_3px_rgba(207,46,46,0.1)]">
-              <span className="material-symbols-outlined text-slate-500 mx-3">search</span>
+            <div className="flex items-center rounded-xl p-2 mb-4 transition-all focus-within:border-[#ec1313] focus-within:shadow-[0_0_0_3px_rgba(207,46,46,0.1)]"
+                 style={{ backgroundColor: 'var(--input-bg)', border: '2px solid var(--border-color)' }}>
+              <span className="material-symbols-outlined mx-3" style={{ color: 'var(--text-tertiary)' }}>search</span>
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar en ofertas..."
-                className="flex-1 border-none outline-none text-base py-3 text-[#1a1a1a]"
+                className="flex-1 border-none outline-none text-base py-3"
+                style={{ backgroundColor: 'transparent', color: 'var(--text-primary)' }}
               />
               <button 
                 onClick={() => setSearchTerm(searchTerm)}
@@ -312,8 +436,12 @@ const OffersPage: React.FC = () => {
                   className={`px-4 py-2 rounded-full text-sm transition-all ${
                     selectedFilter === filter.id
                       ? 'bg-[#ec1313] text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      : '' 
                   }`}
+                  style={selectedFilter !== filter.id ? { 
+                    backgroundColor: 'var(--bg-tertiary)', 
+                    color: 'var(--text-secondary)' 
+                  } : {}}
                 >
                   {filter.label}
                 </button>
@@ -322,17 +450,23 @@ const OffersPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 py-4 border-b border-slate-200">
-          <span className="text-sm text-slate-500 font-medium">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 py-4 border-b"
+             style={{ borderColor: 'var(--border-color)' }}>
+          <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             {filteredProducts.length} oferta{filteredProducts.length !== 1 ? 's' : ''} de {products.length}
           </span>
           <div className="flex items-center gap-2 mt-2 md:mt-0">
-            <label htmlFor="sort-select" className="text-sm text-slate-500">Ordenar por:</label>
+            <label htmlFor="sort-select" className="text-sm" style={{ color: 'var(--text-secondary)' }}>Ordenar por:</label>
             <select
               id="sort-select"
               value={selectedSort}
               onChange={handleSortChange}
-              className="px-3 py-2 border border-slate-200 rounded-md text-sm text-slate-600 bg-white cursor-pointer min-w-[180px] focus:outline-none focus:border-[#ec1313]"
+              className="px-3 py-2 rounded-md text-sm cursor-pointer min-w-[180px] focus:outline-none focus:border-[#ec1313]"
+              style={{ 
+                backgroundColor: 'var(--input-bg)', 
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
             >
               <option value="relevance">Relevancia</option>
               <option value="price-asc">Precio: menor a mayor</option>
@@ -347,11 +481,12 @@ const OffersPage: React.FC = () => {
           {filteredProducts.map(product => (
             <div
               key={product.id}
-              className="flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-shadow hover:shadow-lg cursor-pointer"
+              className="flex flex-col rounded-xl overflow-hidden shadow-sm transition-shadow hover:shadow-lg cursor-pointer"
+              style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}
               data-category={product.category}
               data-discount={product.discount}
             >
-              <div className="relative w-full aspect-square bg-gray-50">
+              <div className="relative w-full aspect-square" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <div className="absolute top-3 left-3 z-10 bg-[#ec1313] text-white text-xs font-bold px-2 py-1 rounded">
                   {product.discount}% OFF
                 </div>
@@ -363,15 +498,17 @@ const OffersPage: React.FC = () => {
               </div>
               <div className="p-5 flex flex-col flex-1">
                 <h3 
-                  className="text-gray-900 font-semibold mb-2 truncate"
+                  className="font-semibold mb-2 truncate"
+                  style={{ color: 'var(--text-primary)' }}
                   dangerouslySetInnerHTML={{ __html: highlightText(product.name, searchTerm) }}
                 />
                 <p 
-                  className="text-slate-500 text-sm leading-relaxed mb-4 h-10 overflow-hidden line-clamp-2"
+                  className="text-sm leading-relaxed mb-4 h-10 overflow-hidden line-clamp-2"
+                  style={{ color: 'var(--text-secondary)' }}
                   dangerouslySetInnerHTML={{ __html: highlightText(product.description, searchTerm) }}
                 />
                 <div className="mt-auto">
-                  <span className="text-gray-400 line-through text-sm font-medium">{product.oldPrice}</span>
+                  <span className="line-through text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>{product.oldPrice}</span>
                   <div className="flex items-baseline gap-2">
                     <p className="text-[#ec1313] text-2xl font-black">{product.price}</p>
                   </div>
@@ -388,11 +525,12 @@ const OffersPage: React.FC = () => {
         </div>
 
         {filteredProducts.length === 0 && (
-          <div className="text-center py-16 px-8 bg-slate-50 rounded-xl my-8">
+          <div className="text-center py-16 px-8 rounded-xl my-8"
+               style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="max-w-md mx-auto">
-              <span className="material-symbols-outlined text-6xl text-slate-300 mb-4">search_off</span>
-              <h3 className="text-2xl text-slate-500 mb-2">No se encontraron ofertas</h3>
-              <p className="text-slate-400 mb-6">Intenta con otros términos de búsqueda o ajusta los filtros</p>
+              <span className="material-symbols-outlined text-6xl mb-4" style={{ color: 'var(--text-tertiary)' }}>search_off</span>
+              <h3 className="text-2xl mb-2" style={{ color: 'var(--text-secondary)' }}>No se encontraron ofertas</h3>
+              <p className="mb-6" style={{ color: 'var(--text-tertiary)' }}>Intenta con otros términos de búsqueda o ajusta los filtros</p>
               <button
                 onClick={clearSearch}
                 className="bg-[#ec1313] text-white border-none rounded-md px-5 py-2.5 text-sm font-medium cursor-pointer transition-colors hover:bg-[#b91c1c]"
@@ -404,69 +542,70 @@ const OffersPage: React.FC = () => {
         )}
 
         {showNotification && (
-          <div className="fixed top-[100px] right-5 bg-white border-l-4 py-4 px-5 rounded-lg shadow-xl flex items-center gap-3 z-50 max-w-[350px] transform translate-x-0 transition-transform duration-300"
-               style={{ borderLeftColor: '#ec1313' }}>
+          <div className="fixed top-[100px] right-5 py-4 px-5 rounded-lg shadow-xl flex items-center gap-3 z-50 max-w-[350px] transform translate-x-0 transition-transform duration-300"
+               style={{ backgroundColor: 'var(--card-bg)', borderLeft: `4px solid #ec1313` }}>
             <span className="material-symbols-outlined text-[#ec1313]">check_circle</span>
-            <span>{notificationMessage}</span>
+            <span style={{ color: 'var(--text-primary)' }}>{notificationMessage}</span>
           </div>
         )}
 
         <div className="mt-16 flex justify-center">
-          <button className="px-8 py-3 bg-white border-2 border-[#ec1313] text-[#ec1313] font-bold rounded-full cursor-pointer transition-all hover:bg-[#ec1313] hover:text-white">
+          <button className="px-8 py-3 border-2 border-[#ec1313] text-[#ec1313] font-bold rounded-full cursor-pointer transition-all hover:bg-[#ec1313] hover:text-white"
+                  style={{ backgroundColor: 'transparent' }}>
             Ver todo el catálogo
           </button>
         </div>
       </main>
 
-      <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-6 text-[#ec1313]">
-              <div className="relative w-8 h-6">
-                <div className="absolute top-0 left-0 w-full h-[30%] bg-[#ec1313] transform -skew-x-[20deg]"></div>
-                <div className="absolute top-[35%] left-[35%] w-[45%] h-[20%] bg-black transform -skew-x-[20deg]"></div>
-                <div className="absolute bottom-0 left-[25%] w-[40%] h-[25%] bg-[#ec1313] transform -skew-x-[20deg]"></div>
-                <div className="absolute top-0 left-[15%] w-[15%] h-full bg-[#ec1313] transform -skew-x-[20deg]"></div>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-logo">
+              <div className="footer-logo-symbol">
+                <div className="t-main"></div>
+                <div className="logo-bars">
+                  <div className="bar-black"></div>
+                  <div className="bar-red"></div>
+                </div>
               </div>
-              <span className="text-lg font-black tracking-tight text-black ml-1">TECOMMERS</span>
+              <span className="footer-logo-text">TECOMMERS</span>
             </div>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="footer-description">
               Líderes en tecnología y productos para el hogar. Calidad garantizada en cada compra.
             </p>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Productos</h4>
-            <ul className="list-none flex flex-col gap-3 text-sm text-gray-500">
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Electrónica</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Hogar</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Moda</a></li>
+          <div className="footer-section">
+            <h4 className="footer-heading">Productos</h4>
+            <ul className="footer-links">
+              <li><Link to="/categories/tecnologia" className="footer-link">Electrónica</Link></li>
+              <li><Link to="/categories/muebles-hogar" className="footer-link">Hogar</Link></li>
+              <li><Link to="#" className="footer-link">Moda</Link></li>
             </ul>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Soporte</h4>
-            <ul className="list-none flex flex-col gap-3 text-sm text-gray-500">
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Ayuda</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Envíos</a></li>
-              <li><a href="#" className="text-gray-500 no-underline transition-colors hover:text-[#ec1313]">Contacto</a></li>
+          <div className="footer-section">
+            <h4 className="footer-heading">Soporte</h4>
+            <ul className="footer-links">
+              <li><Link to="/help" className="footer-link">Ayuda</Link></li>
+              <li><Link to="/help" className="footer-link">Envíos</Link></li>
+              <li><Link to="/contact" className="footer-link">Contacto</Link></li>
             </ul>
           </div>
-          <div className="flex flex-col">
-            <h4 className="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Newsletter</h4>
-            <div className="flex rounded-lg overflow-hidden border border-gray-300">
-              <input type="email" placeholder="Email" className="flex-1 px-4 py-2 text-sm outline-none border-none" />
+          <div className="footer-section">
+            <h4 className="footer-heading">Newsletter</h4>
+            <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'var(--border-color)' }}>
+              <input type="email" placeholder="Email" className="flex-1 px-4 py-2 text-sm outline-none border-none"
+                     style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-primary)' }} />
               <button className="bg-[#ec1313] text-white px-4 py-2 text-xs font-bold border-none cursor-pointer transition-colors hover:bg-[#b91c1c]">
                 UNIRSE
               </button>
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-gray-200">
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
-            © 2024 Tecommers. Todos los derechos reservados.
-          </p>
-          <div className="flex gap-6 text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
-            <a href="#" className="text-gray-400 no-underline transition-colors hover:text-[#ec1313]">Privacidad</a>
-            <a href="#" className="text-gray-400 no-underline transition-colors hover:text-[#ec1313]">Términos</a>
+        <div className="footer-bottom">
+          <p className="copyright">© 2024 Tecommers. Todos los derechos reservados.</p>
+          <div className="footer-bottom-links">
+            <Link to="/privacy" className="footer-bottom-link">Privacidad</Link>
+            <Link to="/terms" className="footer-bottom-link">Términos</Link>
           </div>
         </div>
       </footer>

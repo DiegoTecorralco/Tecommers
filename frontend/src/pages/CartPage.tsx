@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useTheme } from '../pages/ThemeContext';
 import './CartPage.css';
 
 const CartPage: React.FC = () => {
@@ -19,6 +20,7 @@ const CartPage: React.FC = () => {
     subtotal,
     discount
   } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -45,7 +47,7 @@ const CartPage: React.FC = () => {
   ];
 
   return (
-    <>
+    <div style={{ backgroundColor: 'var(--bg-primary)' }}>
       <header className="header">
         <div className="header-container">
           <div className="logo-container">
@@ -66,6 +68,11 @@ const CartPage: React.FC = () => {
           </nav>
 
           <div className="icon-container">
+            <button onClick={toggleTheme} className="icon-button" aria-label="Cambiar tema">
+              <span className="material-symbols-outlined">
+                {theme === 'light' ? 'dark_mode' : 'light_mode'}
+              </span>
+            </button>
             <Link to="/cart" className="icon-button active" aria-label="Carrito de compras">
               <span className="material-symbols-outlined">shopping_cart</span>
               {cartItems.length > 0 && (
@@ -474,7 +481,7 @@ const CartPage: React.FC = () => {
           <p className="copyright">© 2026 Tecommers. Todos los derechos reservados.</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 };
 

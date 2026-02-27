@@ -15,6 +15,44 @@ const HomePage: React.FC = () => {
   const [pendingDelete, setPendingDelete] = useState<{ reviewId: string; element: HTMLElement } | null>(null);
   const { cartCount } = useCart();
   const { theme, toggleTheme } = useTheme();
+  
+  // ===== IMPLEMENTACIÓN DE CAMBIO DINÁMICO DE CONTENIDO =====
+  const [mainTitle, setMainTitle] = useState('Todo lo que necesitas, en un solo lugar');
+  const [isExtraSectionVisible, setIsExtraSectionVisible] = useState(false);
+  const [titleColor, setTitleColor] = useState('#ec1313');
+  
+  // Función para cambiar el título principal
+  const changeMainTitle = () => {
+    const titles = [
+      'Todo lo que necesitas, en un solo lugar',
+      'Las mejores ofertas están aquí',
+      'Calidad y confianza a tu alcance',
+      'Descubre productos exclusivos',
+      'Envíos gratis a todo el país'
+    ];
+    const colors = ['#ec1313', '#2563eb', '#16a34a', '#9333ea', '#ea580c'];
+    
+    const randomIndex = Math.floor(Math.random() * titles.length);
+    setMainTitle(titles[randomIndex]);
+    setTitleColor(colors[randomIndex]);
+    
+    // También podemos modificar el DOM directamente con textContent (ejemplo adicional)
+    const subtitleElement = document.querySelector('.hero-subtitle');
+    if (subtitleElement) {
+      subtitleElement.textContent = `¡Nuevo título: ${titles[randomIndex].split(',')[0]}!`;
+    }
+  };
+  
+  // Función para mostrar/ocultar la sección extra
+  const toggleExtraSection = () => {
+    setIsExtraSectionVisible(!isExtraSectionVisible);
+    
+    // También podemos manipular el estilo display directamente
+    const extraSection = document.getElementById('extra-info-section');
+    if (extraSection) {
+      extraSection.style.display = !isExtraSectionVisible ? 'block' : 'none';
+    }
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -351,9 +389,11 @@ const HomePage: React.FC = () => {
         <div className="hero-banner"></div>
         <div className="hero-overlay"></div>
         <div className="hero-content">
-          <h1 className="hero-title">
-            Todo lo que necesitas, <br className="hero-break" />
-            <span className="hero-highlight">en un solo lugar</span>
+          <h1 className="hero-title" style={{ color: titleColor }}>
+            {mainTitle.split(',')[0]}, <br className="hero-break" />
+            <span className="hero-highlight" style={{ color: titleColor }}>
+              {mainTitle.split(',')[1] || 'en un solo lugar'}
+            </span>
           </h1>
           <p className="hero-subtitle">
             Descubre nuestra selección exclusiva de productos con envíos a todo el país.
@@ -370,6 +410,46 @@ const HomePage: React.FC = () => {
                 type="text"
               />
               <button className="search-button">Buscar</button>
+            </div>
+          </div>
+
+          {/* ===== BOTONES PARA CAMBIO DINÁMICO ===== */}
+          <div className="flex gap-4 justify-center mt-8">
+            <button
+              onClick={changeMainTitle}
+              className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined">edit</span>
+              Cambiar Título
+            </button>
+            
+            <button
+              onClick={toggleExtraSection}
+              className="px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined">
+                {isExtraSectionVisible ? 'visibility_off' : 'visibility'}
+              </span>
+              {isExtraSectionVisible ? 'Ocultar' : 'Mostrar'} Sección Extra
+            </button>
+          </div>
+
+          {/* ===== SECCIÓN EXTRA QUE SE PUEDE OCULTAR/MOSTRAR ===== */}
+          <div 
+            id="extra-info-section"
+            className={`mt-8 p-6 bg-white bg-opacity-20 backdrop-blur-lg rounded-xl transition-all duration-300 ${
+              isExtraSectionVisible ? 'block' : 'hidden'
+            }`}
+          >
+            <h3 className="text-2xl font-bold text-white mb-4">Información Adicional</h3>
+            <p className="text-white text-opacity-90">
+              Aprovecha nuestras ofertas especiales. Los mejores precios y la mejor calidad 
+              están en Tecommers. ¡No esperes más para comprar!
+            </p>
+            <div className="mt-4 flex gap-4">
+              <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm">-20%</span>
+              <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm">Envío gratis</span>
+              <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm">Nuevo</span>
             </div>
           </div>
         </div>

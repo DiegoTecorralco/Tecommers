@@ -40,9 +40,280 @@ JavaScript puede "escuchar" estos eventos y ejecutar una función (llamada "even
 
 ---
 
+## Arbol DOM
+
+body
+├── header.header
+│   └── div.header-container
+│       ├── div.logo-container
+│       │   ├── svg.logo-svg
+│       │   └── span.logo-text
+│       ├── nav.nav
+│       │   ├── Link (Home)
+│       │   ├── Link (Categorías)
+│       │   ├── Link (Ofertas)
+│       │   ├── Link (Servicios)
+│       │   └── Link (Nosotros)
+│       └── div.icon-container
+│           ├── button.icon-button (tema)
+│           ├── Link.icon-button (carrito)
+│           │   └── span.cart-badge (condicional)
+│           ├── Link.icon-button (perfil)
+│           └── div.hamburger-menu
+│               └── button.hamburger-button
+│                   ├── span.hamburger-line
+│                   ├── span.hamburger-line
+│                   └── span.hamburger-line
+│
+├── MODALES (condicionales)
+│   ├── div.showSuccessModal (modal éxito reseña)
+│   ├── div.showDeleteModal (modal confirmar eliminar)
+│   └── div.showDeleteSuccessModal (modal éxito eliminación)
+│
+├── div.side-menu-overlay
+│
+├── div.side-menu
+│   ├── div.side-menu-header
+│   │   ├── div.side-menu-user
+│   │   │   ├── div.side-menu-avatar
+│   │   │   └── div.side-menu-user-info
+│   │   │       ├── h3
+│   │   │       └── p
+│   │   └── button.side-menu-close
+│   │
+│   ├── div.side-menu-search
+│   │   └── div.side-menu-search-box
+│   │       ├── span.material-symbols-outlined
+│   │       └── input.side-menu-search-input
+│   │
+│   ├── div.side-menu-nav
+│   │   ├── div.side-menu-section
+│   │   │   ├── h4.side-menu-section-title
+│   │   │   └── ul.side-menu-links
+│   │   │       ├── li → Link (Home)
+│   │   │       ├── li → Link (Categorías)
+│   │   │       ├── li → Link (Ofertas)
+│   │   │       ├── li → Link (Servicios)
+│   │   │       └── li → Link (Nosotros)
+│   │   │
+│   │   └── div.side-menu-section
+│   │       ├── h4.side-menu-section-title
+│   │       └── div.side-menu-category-grid
+│   │           ├── Link (Electrodomésticos)
+│   │           ├── Link (Muebles y Hogar)
+│   │           ├── Link (Tecnología)
+│   │           └── Link (Herramientas)
+│   │
+│   └── div.side-menu-footer
+│       └── div.side-menu-footer-links
+│           ├── Link (Centro de Ayuda)
+│           ├── Link (Iniciar Sesión)
+│           └── Link (Registrarse)
+│
+├── section.hero
+│   ├── div.hero-banner
+│   ├── div.hero-overlay
+│   └── div.hero-content (PADRE PRINCIPAL)
+│       ├── h1.hero-title (MODIFICADO dinámicamente)
+│       │   ├── [texto parte1],
+│       │   ├── br.hero-break
+│       │   └── span.hero-highlight [texto parte2]
+│       │
+│       ├── p.hero-subtitle (MODIFICADO con textContent)
+│       │
+│       ├── div.search-container
+│       │   └── div.search-box
+│       │       ├── div.search-icon
+│       │       │   └── span.material-symbols-outlined
+│       │       ├── input.search-input
+│       │       └── button.search-button
+│       │
+│       ├── NUEVO: div.flex.gap-4.mt-8 (contiene botones)
+│       │   ├── button (Cambiar Título)
+│       │   │   └── span.material-symbols-outlined
+│       │   └── button (Mostrar/Ocultar Sección Extra)
+│       │       └── span.material-symbols-outlined
+│       │
+│       └── NUEVO: div#extra-info-section (visible/oculto)
+│           ├── h3
+│           ├── p
+│           └── div.mt-4.flex.gap-4
+│               ├── span (etiqueta -20%)
+│               ├── span (etiqueta Envío gratis)
+│               └── span (etiqueta Nuevo)
+│
+├── main.main
+│   ├── div.section-header
+│   │   ├── div
+│   │   │   ├── p.section-subtitle
+│   │   │   └── h2.section-title
+│   │   └── Link.section-link
+│   │       └── span.material-symbols-outlined
+│   │
+│   ├── div.categories-grid
+│   │   ├── Link.category-card (Tecnología)
+│   │   │   ├── div.category-image-container
+│   │   │   │   ├── img.category-image
+│   │   │   │   └── div.category-overlay
+│   │   │   ├── h3.category-title
+│   │   │   └── p.category-description
+│   │   │
+│   │   ├── Link.category-card (Electrodomésticos)
+│   │   ├── Link.category-card (Muebles y Hogar)
+│   │   └── Link.category-card (Herramientas)
+│   │
+│   └── section.reviews-section
+│       ├── div.text-center
+│       │   ├── h2
+│       │   │   └── span
+│       │   └── p
+│       │
+│       ├── div#reviews-container (contenedor dinámico)
+│       │
+│       └── div.max-w-2xl (formulario reseñas)
+│           ├── h3
+│           │   └── span
+│           │
+│           └── form#review-form
+│               ├── div (nombre)
+│               │   ├── label
+│               │   ├── input#reviewer-name
+│               │   └── div#error-reviewer-name.error-message
+│               │       └── span
+│               │
+│               ├── div (categoría)
+│               │   ├── label
+│               │   ├── select#review-product
+│               │   │   ├── option (vacío)
+│               │   │   ├── option (Tecnología)
+│               │   │   ├── option (Electrodomésticos)
+│               │   │   ├── option (Muebles y Hogar)
+│               │   │   └── option (Herramientas)
+│               │   └── div#error-review-product.error-message
+│               │       └── span
+│               │
+│               ├── div (nombre producto)
+│               │   ├── label
+│               │   ├── input#review-product-name
+│               │   └── div#error-review-product-name.error-message
+│               │       └── span
+│               │
+│               ├── div (calificación)
+│               │   ├── label
+│               │   ├── div#rating-stars
+│               │   │   ├── button.rating-star (★)
+│               │   │   ├── button.rating-star (★)
+│               │   │   ├── button.rating-star (★)
+│               │   │   ├── button.rating-star (★)
+│               │   │   └── button.rating-star (★)
+│               │   ├── input#review-rating-value
+│               │   └── div#error-rating.error-message
+│               │       └── span
+│               │
+│               ├── div (comentario)
+│               │   ├── div.flex
+│               │   │   ├── label
+│               │   │   └── span#character-count
+│               │   ├── textarea#review-comment
+│               │   └── div#error-review-comment.error-message
+│               │       └── span
+│               │
+│               └── div.flex.gap-4 (botones formulario)
+│                   ├── button#submitReviewBtn
+│                   │   └── span
+│                   └── button#resetReviewBtn
+│                       └── span
+│
+└── footer.footer
+    ├── div.footer-content
+    │   ├── div.footer-section
+    │   │   ├── div.footer-logo
+    │   │   │   ├── div.footer-logo-symbol
+    │   │   │   │   ├── div.t-main
+    │   │   │   │   └── div.logo-bars
+    │   │   │   │       ├── div.bar-black
+    │   │   │   │       └── div.bar-red
+    │   │   │   └── span.footer-logo-text
+    │   │   └── p.footer-description
+    │   │
+    │   ├── div.footer-section
+    │   │   ├── h4.footer-heading
+    │   │   └── ul.footer-links
+    │   │       ├── li → Link (Sobre Nosotros)
+    │   │       └── li → Link (Nuestros Servicios)
+    │   │
+    │   └── div.footer-section
+    │       ├── h4.footer-heading
+    │       └── ul.footer-links
+    │           ├── li → Link (Tecnología)
+    │           ├── li → Link (Electrodomésticos)
+    │           ├── li → Link (Muebles y Hogar)
+    │           └── li → Link (Herramientas)
+    │
+    └── div.footer-bottom
+        └── p.copyright
+
+
+## Nodos 
+
+- **h1.hero-title**: Título principal modificado dinámicamente
+- **p.hero-subtitle**: Subtítulo modificado con textContent
+- **div.hero-content**: Padre que contiene todos los elementos
+- **div.botones**: Nuevo contenedor con botones de control
+- **div#extra-info-section**: Nueva sección ocultable
+- **button (Cambiar Título)**: Botón que ejecuta changeMainTitle()
+- **button (Mostrar/Ocultar)**: Botón que ejecuta toggleExtraSection()
+
+## Antes y Después
+
+**ANTES (estructura original):**
+```html
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Todo lo que necesitas, <br><span>en un solo lugar</span></h1>
+    <p class="hero-subtitle">Descubre nuestra selección exclusiva de productos con envíos a todo el país.</p>
+    <div class="search-container">...</div>
+  </div>
+</section>
+```
+
+**DESPUÉS (estructura modificada):**
+```html
+<section class="hero">
+  <div class="hero-content">  <!-- MISMO PADRE -->
+    <h1 class="hero-title" style="color: #2563eb;">Las mejores ofertas están aquí, <br><span>en un solo lugar</span></h1>  <!-- MODIFICADO: texto y color -->
+    <p class="hero-subtitle">¡Nuevo título: Las mejores ofertas están aquí!</p>  <!-- MODIFICADO: texto con JS -->
+    <div class="search-container">...</div>  <!-- IGUAL -->
+    
+    <!-- NUEVOS HIJOS AGREGADOS -->
+    <div class="flex gap-4 mt-8">
+      <button class="px-6 py-3 bg-blue-600 ...">  <!-- NUEVO: botón 1 -->
+        <span>edit</span>
+        Cambiar Título
+      </button>
+      <button class="px-6 py-3 bg-purple-600 ...">  <!-- NUEVO: botón 2 -->
+        <span>visibility</span>
+        Mostrar Sección Extra
+      </button>
+    </div>
+    
+    <div id="extra-info-section" class="hidden">  <!-- NUEVO: sección ocultable -->
+      <h3>Información Adicional</h3>
+      <p>Aprovecha nuestras ofertas especiales...</p>
+      <div class="mt-4 flex gap-4">
+        <span class="bg-red-600">-20%</span>
+        <span class="bg-blue-600">Envío gratis</span>
+        <span class="bg-green-600">Nuevo</span>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+**Resumen:** El padre (`hero-content`) es el mismo, se **agregaron dos nuevos hijos**: un contenedor con dos botones y una sección ocultable con ofertas. Además se **modificó el texto** de título y subtítulo usando useState y manipulación directa del DOM.
 ### En Resumen
 
-1.  **DOM:** El árbol de objetos de tu página.
+1.  **DOM:** El árbol de objetos de la página.
 2.  **Renderizado:** El proceso del navegador para convertir HTML en ese árbol y pintarlo.
 3.  **Selectores:** Las herramientas de JavaScript para encontrar partes específicas de ese árbol.
 4.  **Eventos:** Las acciones que ocurren en el navegador y a las que tu código puede reaccionar.

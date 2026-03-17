@@ -40,7 +40,7 @@ JavaScript puede "escuchar" estos eventos y ejecutar una función (llamada "even
 
 ---
 
-## Arbol DOM
+## árbol DOM
 
 body
 ├── header.header
